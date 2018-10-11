@@ -29,7 +29,7 @@ class Circle extends Geometry {
     //
     super(); 
     this.generateCircleVertices(radius, segments, centerX, centerY);
-    this.n=segments; 
+    this.n=segments*2; 
   }
 
   /**
@@ -52,6 +52,8 @@ class Circle extends Geometry {
         let y = centerY+ Math.sin(angle)*radius/100; 
         this.vertices.push(x); 
         this.vertices.push(y); 
+        this.vertices.push(centerX); 
+        this.vertices.push(centerY); 
      }
     //for(var theta = 0; theta<=(2*Math.PI); theta+=delta)
    // {
