@@ -60,14 +60,24 @@ function initEventHandelers() {
   //The canvas is initially set up to draw squares
   drawMode = "squares"; 
 
-  objFile = document.getElementById("file"); 
+  //objFile = document.getElementById("file"); 
 
  // console.log("objFile: "+objFile+"\n"); 
  // console.log("objFile.value"+objFile.value+"\n"); 
 
   //Initializes the onclick listeners to toggle between shapes to be drawn 
-  testButton.onclick = function(){loadFile(objFile.value, )}; 
-  
+ // testButton.onclick = function(){loadFile(objFile.value, )}; 
+  testButton.onclick = function(){
+    let readFile = new FileReader();
+    objFile =document.getElementById("file").files[0];
+    readFile.readAsText(objFile);
+    readFile.onloadend = function()
+    {
+      let o = new LoadedOBJ(readFile.result);
+      currScene.addGeometry(o); 
+    } 
+  }
+
   //testButton.onclick = function(){ addLoadedOBJ();}; 
 
   squareButton.onclick = function(){drawMode = "squares";}; 
