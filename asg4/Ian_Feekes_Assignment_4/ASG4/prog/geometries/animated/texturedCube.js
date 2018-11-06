@@ -44,6 +44,7 @@ class MultiTextureCube extends TiltedCube {
     // Recomendations: Remember uv coordinates are defined from 0.0 to 1.0.
   }
 
+
  /*  loadTexture(gl,n,texture,u_Sampler,image){
        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); 
       gl.activeTexture(gl.TEXTURE0); 

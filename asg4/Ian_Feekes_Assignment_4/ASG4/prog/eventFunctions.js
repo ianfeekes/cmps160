@@ -61,6 +61,9 @@ function initEventHandelers() {
   circleButton = document.getElementById("circleButton"); 
   cubeButton = document.getElementById("cubeButton"); 
   addGeometryToScene = document.getElementById("addGeometryToScene"); 
+  objFile = document.getElementById("objFile"); 
+  textureFile = document.getElementById("textureImage"); 
+
   clearButton.onclick = function(){clearCanvas();};  
   //The canvas is initially set up to draw squares
   drawMode = "squares"; 
@@ -72,43 +75,28 @@ function initEventHandelers() {
     }
     else colorButton.value="Solid Color D:"; 
   }
+ 
 
-
-
-  addGeometryToScene.onclick = function(){
-   //let readFile = new FileReader();
-   let objShape = new MultiTextureCube(objFile.file[0].name); 
-    currScene.addGeometry(objShape); 
-    /*
-   objFile = document.getElementById('objFile').files[0];
-   readFile.readAsText(objFile);
-   readFile.onloadend = function() {
-      let objShape = new rotatingObject(readFile.result);
-      scene.addGeometry(objShape);
-    };*/ 
-    var argument; 
-
-    /*objFile=document.getElementById('textureImage'); 
-
-    objFile.onchange = function(evt){
-      var tgt = evt.target || window.event.srcElement, files=tgt.files; 
-      if(FILEREADER && files && files.length)
+  addGeometryToScene.addEventListener("click", function(event) {
+    event.preventDefault();
+    loadFile(objFile.value.split(/(\\|\/)/g).pop(), function(textData){
+      let lObj = new LoadedOBJ(textData);
+      /*lObj.updateAnimation = function(){
+        this.modelMatrix.rotate(1,0,1,1);
+      };*/ 
+      if(textureFile.value>0)
       {
-        var fr = new FileReader();
-        argument = fr.result; 
-        fr.readAsDataURL(files[0]);
-
-        
-      }*/
-
-      
-    
-   //  console.log("creating object shape\n"); 
-  //  console.log("objeFile.value: "+objFile.value+"\n"); 
+        let pathName = textureFile.value.split(/(\\|\/)/g).pop();
+        let readablePath = "./"+pathName; 
+        create2DTexture(path, gl.LINEAR, gl.LINEAR, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE, (texture) => {
+          lObj.texture = texture; 
+        });
+      }
+      currScene.addGeometry(lObj); 
+       });
+    });
 
 
-    
-  };
 
   //testButton.onclick = function(){ addLoadedOBJ();}; 
 
@@ -170,8 +158,15 @@ function click(ev) {
   } 
   else if(drawMode =="cubes"){
     //let cu = new TiltedCube(pScale,x,y);
+    if(textureFile.value!=null)
+    {
+      console.log("texture found \n"); 
+      let tcu = new CheckerCube(pScale,x,y); 
+    }
+    else{
     let cu = new TiltedCube(pScale,x,y, currColor,flag);
     currScene.addGeometry(cu); 
+    }
   }
    //let objFile = document.getElementById("file"); 
   /*console.log("objFile: "+objFile+"\n"); 
