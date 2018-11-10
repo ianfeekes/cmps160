@@ -115,7 +115,7 @@ class Geometry {
 
 
 //    sendAttributeBufferToGLSL(data, 3, 'a_Position'); 
-    if(this instanceof TiltedCube)
+    if(this instanceof TiltedCube || this isntanceof CheckerCube)
       {
         if(this instanceof CheckerCube)
         {

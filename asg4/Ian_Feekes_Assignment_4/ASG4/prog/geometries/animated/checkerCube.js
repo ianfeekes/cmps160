@@ -23,6 +23,8 @@ class CheckerCube extends TiltedCube {
     create2DTexture(path,gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT, (texture) => {
          this.texture = texture; 
        }); 
+    
+
     // Recomendations: Might want to call generateUVCoordinates here.
   }
 
