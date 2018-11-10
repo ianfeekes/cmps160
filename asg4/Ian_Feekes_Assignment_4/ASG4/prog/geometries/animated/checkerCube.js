@@ -18,15 +18,17 @@ class CheckerCube extends TiltedCube {
     //
     super(size, centerX, centerY, color, cFlag); 
     this.generateUVCoordinates(); 
+    super.setUVArray(); 
     let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
     let path = "./"+filename;
     create2DTexture(path,gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT, (texture) => {
          this.texture = texture; 
        }); 
-    
+
 
     // Recomendations: Might want to call generateUVCoordinates here.
   }
+
 
   /**
    * Generates the texture coordinates of CheckerCube.
@@ -67,6 +69,9 @@ class CheckerCube extends TiltedCube {
     this.vertices[21].uv = [1.0,  0.0]
     this.vertices[22].uv = [1.0,  1.0]
     this.vertices[23].uv = [0.0,  1.0]
+
+    //console.log("creating uv vertices...\n"); 
+    //console.log(this.vertices); 
     //create2DTexture(textureImage.value, gl.LINEAR, gl.NEAREST_MIPMAP_LINEAR, gl.REPEAT, gl.REPEAT, send2DTextureToGLSL); 
 
     // Recomendations: Remember uv coordinates are defined from 0.0 to 1.0.

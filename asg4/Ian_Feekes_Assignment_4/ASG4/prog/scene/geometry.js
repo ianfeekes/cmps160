@@ -76,6 +76,17 @@ class Geometry {
     //console.log(this.color+"\n"); 
   }
 
+  /*This is done here rather than in setArrayValues because checkered cube initializes its
+    super constructor, which would involve null values*/ 
+  setUVArray()
+  {
+    for(let i=0;i<this.vertices.length;i++)
+    {
+      this.uv_data.push(this.vertices[i].uv[0], this.vertices[i].uv[1]); 
+    }
+    this.uv_data = new Float32Array(this.uv_data);
+  }
+
   setArrayValues()
   {
     for(var i=0;i<this.vertices.length;i++)
@@ -83,14 +94,22 @@ class Geometry {
       //data.push(Array.prototype.slice.call(this.vertices[i].points.elements));
       this.data.push(this.vertices[i].points[0],this.vertices[i].points[1],this.vertices[i].points[2] ); 
       //uv_data.push(Array.prototype.slice.call(this.vertices[i].uv));
-      this.uv_data.push(this.vertices[i].uv); 
+      //console.log(this.vertices[i].uv[0]); 
+      //console.log(this.vertices[i].uv[1]);
+      //this.uv_data.push(this.vertices[i].uv[0], this.vertices[i].uv[1]); 
       //color_data.push(Array.prototype.slice.call(this.vertices[i].color));
       this.color_data.push(this.vertices[i].color[0], this.vertices[i].color[1],this.vertices[i].color[2]); 
     }
 
+    //console.log("In setArrayValues logging  vertices uv data before initializing as float32\n"); 
+    //console.log(this.vertices); 
+    //console.log(this.uv_data); 
+
     this.data = new Float32Array(this.data);
-    this.uv_data = new Float32Array(this.uv_data);
+    //this.uv_data = new Float32Array(this.uv_data);
     this.color_data = new Float32Array(this.color_data);
+    //console.log("In setArrayValues logging uv data\n"); 
+    //console.log(this.uv_data); 
   }
 
   /**
@@ -98,38 +117,20 @@ class Geometry {
    * Sets color, translates vertices, sets vertices, and draws 
    */
   render() {
-   /* let data = [];
-    let uv_data = []; 
-    let color_data = []; 
-
-    for(var i=0;i<this.vertices.length;i++)
-    {
-      //data.push(Array.prototype.slice.call(this.vertices[i].points.elements));
-      data.push(this.vertices[i].points[0],this.vertices[i].points[1],this.vertices[i].points[2] ); 
-      //uv_data.push(Array.prototype.slice.call(this.vertices[i].uv));
-      uv_data.push(this.vertices[i].uv); 
-      //color_data.push(Array.prototype.slice.call(this.vertices[i].color));
-      color_data.push(this.vertices[i].color[0], this.vertices[i].color[1],this.vertices[i].color[2]); 
-    }
-
-    data = new Float32Array(data);
-    uv_data = new Float32Array(uv_data);
-    color_data = new Float32Array(color_data); */ 
-
-
-//    sendAttributeBufferToGLSL(data, 3, 'a_Position'); 
+    useShader(gl, this.shader); 
     if(this instanceof TiltedCube)
       {
         if(this instanceof CheckerCube)
         {
           //this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
-          useShader(gl, this.shader); 
+          //useShader(gl, this.shader); 
           send2DTextureToGLSL(this.texture, 0, 'u_Sampler')
+          console.log(this.uv_data); 
           sendAttributeBufferToGLSL(this.uv_data, 2, 'a_TexCoord', 2, 0); 
         }
         else
         {
-          useShader(gl, this.shader); 
+          //useShader(gl, this.shader); 
           console.log("tilted cube so sending color buffer...\n"); 
           sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
         }
