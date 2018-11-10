@@ -126,6 +126,7 @@ class Geometry {
         }
         else
         {
+          console.log("tilted cube so sending color buffer...\n"); 
           sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
         }
         sendAttributeBufferToGLSL(this.data, 3, 'a_Position'); 

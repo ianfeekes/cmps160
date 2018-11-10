@@ -16,6 +16,8 @@
  * textureUnit location (0 - 7) will reside
  */
 function send2DTextureToGLSL(val, textureUnit, uniformName) {
+  console.log("logging val in send2DTextureToGLSL...\n");
+  console.log(val); 
   var uName = gl.getUniformLocation(gl.program, uniformName);
   if (uName < 0) {
     console.log('Failed to get the storage location of the attribute being sent to glsl\n');
