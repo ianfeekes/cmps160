@@ -120,7 +120,7 @@ class Geometry {
     useShader(gl, this.shader); 
     if(this instanceof TiltedCube)
       {
-        if(this instanceof CheckerCube)
+        if(this instanceof CheckerCube || this instanceof MultiTextureCube)
         {
           //this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
           //useShader(gl, this.shader); 
@@ -131,7 +131,7 @@ class Geometry {
         else
         {
           //useShader(gl, this.shader); 
-          console.log("tilted cube so sending color buffer...\n"); 
+          //console.log("tilted cube so sending color buffer...\n"); 
           sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
         }
         sendAttributeBufferToGLSL(this.data, 3, 'a_Position'); 
