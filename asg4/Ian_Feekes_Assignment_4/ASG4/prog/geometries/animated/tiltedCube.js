@@ -13,13 +13,7 @@ class TiltedCube extends Geometry {
    */
   constructor(size, centerX, centerY,color,cFlag) {
     super();
-    this.n=8; 
-    if(cFlag==1)
-      { 
-        //console.log("setting color to grey"); 
-        super.setColor(color);
-      }
-     else super.setRandomColor(); 
+    this.n=24; 
 
      //console.log(this.color); 
     //this.color.push(.5); 
@@ -27,8 +21,15 @@ class TiltedCube extends Geometry {
     this.generateCubeVertices(centerX, centerY, size, this.color);
     this.size=size;
     this.centerX=centerX;
-    this.centerY=centerY;  
-
+    this.centerY=centerY;
+     if(cFlag==1)
+      { 
+        //console.log("setting color to grey"); 
+        super.setColor(color);
+      }
+     else super.setRandomColor();   
+     //Dissect the color and point data for easy digestion during rendering
+     super.setArrayValues(); 
     // Recommendations: Might want to tilt your cube at 30 degrees relative to
     // the z-axis here. Pretty good tilt that lets us see that it's a cube.
   }
@@ -39,9 +40,41 @@ class TiltedCube extends Geometry {
    * @private
    */
   generateCubeVertices(centerX, centerY, size, color) {
-    let sizeScale = 150; 
+    size/=150; 
     //vertex coordinates and color 
-    this.vertices = new Float32Array([
+    for(let i=0;i<24;i++)
+    {
+    	this.vertices[i]=new Vertex(); 
+    }
+    this.vertices[0].setPoints(centerX-size, centerY-size, size);
+    this.vertices[1].setPoints(centerX+size,centerY-size,size); 
+    this.vertices[2].setPoints(centerX+size,centerY+size,size); 
+    this.vertices[3].setPoints(centerX-size,centerY+size,size); 
+    this.vertices[4].setPoints(centerX-size,centerY-size,-size);
+    this.vertices[5].setPoints(centerX-size,centerY+size,-size);
+    this.vertices[6].setPoints(centerX+size,centerY+size,-size); 
+    this.vertices[7].setPoints(centerX+size,centerY-size,-size); 
+    this.vertices[8].setPoints(centerX-size,centerY+size,-size); 
+    this.vertices[9].setPoints(centerX-size,centerY+size,size); 
+    this.vertices[10].setPoints(centerX+size,centerY+size,size); 
+    this.vertices[11].setPoints(centerX+size,centerY+size,-size);
+    this.vertices[12].setPoints(centerX-size,centerY-size,-size); 
+    this.vertices[13].setPoints(centerX+size,centerY-size,-size);
+    this.vertices[14].setPoints(centerX+size,centerY-size,size); 
+    this.vertices[15].setPoints(centerX-size,centerY-size,size); 
+    this.vertices[16].setPoints(centerX+size,centerY-size,-size);
+    this.vertices[17].setPoints(centerX+size,centerY+size,-size);
+    this.vertices[18].setPoints(centerX+size,centerY+size,size); 
+    this.vertices[19].setPoints(centerX+size,centerY-size,size); 
+    this.vertices[20].setPoints(centerX-size,centerY-size,-size);
+    this.vertices[21].setPoints(centerX-size,centerY-size,size);
+    this.vertices[22].setPoints(centerX-size,centerY+size,size); 
+    this.vertices[23].setPoints(centerX-size,centerY+size,-size);
+
+    //console.log("about to print cube vertices \n");
+    //console.log(this.vertices); 
+
+    /*this.vertices = new Float32Array([
     centerX+size/sizeScale,  centerY+size/sizeScale,  size/sizeScale,   this.color[0],  this.color[1],  this.color[2],  
     centerX-size/sizeScale,  centerY+size/sizeScale,  size/sizeScale,   this.color[3],  this.color[4],  this.color[5],  
     centerX-size/sizeScale, centerY-size/sizeScale,  size/sizeScale,   this.color[6],  this.color[7],  this.color[8],  
@@ -50,16 +83,16 @@ class TiltedCube extends Geometry {
     centerX+size/sizeScale,  centerY+size/sizeScale, -size/sizeScale,    this.color[15],  this.color[16],  this.color[17],  
     centerX-size/sizeScale,  centerY+size/sizeScale, -size/sizeScale,    this.color[18],  this.color[19],  this.color[20],  
     centerX-size/sizeScale, centerY-size/sizeScale, -size/sizeScale,    this.color[21],  this.color[22],  this.color[23]  
-    ]);
+    ]);*/
 
     //indices of the vertices 
     this.indices = new Uint8Array([
       0, 1, 2,   0, 2, 3, 
-      0, 3, 4,   0, 4, 5, 
-      0, 5, 6,   0, 6, 1, 
-      1, 6, 7,   1, 7, 2, 
-      7, 4, 3,   7, 3, 2, 
-      4, 7, 6,   4, 6, 5
+      4, 5, 6,   4, 6, 7, 
+      8, 9, 10,  8, 10, 11,
+      12, 13, 14, 12, 14, 15,
+      16, 17, 18, 16, 18, 19, 
+      20, 21, 22, 20, 22, 23, 
       ]); 
   }
 
@@ -70,12 +103,13 @@ class TiltedCube extends Geometry {
    * is rotating about its own axis rather than the origin
    */
   updateAnimation() {
+  	//console.log("updating animation of tilted cube \n"); 
     this.modelMatrix.translate(this.centerX, this.centerY, 0);
     this.modelMatrix.rotate(1,1.5,1.5,1); 
-    this.modelMatrix.translate(-this.centerX, -this.centerY, 0); 
+    this.modelMatrix.translate(-this.centerX, -this.centerY, 0);  
   }
 
-  render()
+  /*render()
   {
 
      //gl.enable(gl.DEPTH_TEST);
@@ -105,6 +139,6 @@ class TiltedCube extends Geometry {
   //  gl.uniformMatrix4fv(u_ModelMatrix, false, this.modelMatrix.elements);
 
     gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_BYTE, 0);
-  }
+  }*/ 
 
 }

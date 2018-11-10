@@ -21,17 +21,35 @@ class Geometry {
     this.vecX=0;
     this.vecY=0; 
     this.SIZE_STEP = 0;
+    this.shader=null;   //We will have to start using multipl shaders for textures
+    this.data = [];
+    this.uv_data = []; 
+    this.color_data = []; 
+    if(this instanceof TiltedCube)
+    {
+       if(this instanceof CheckerCube)
+        {
+          this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
+          useShader(gl, this.shader); 
+        }
+    }
+    else
+    {
+       this.shader = createShader(gl, ASSIGN4_VSHADER, ASSIGN4_FSHADER); 
+      useShader(gl, this.shader); 
+    }
   }
 
   //Sets color 
   setColor(c)
   {
     //Do this for every vertex still 
-    for(let i=1;i<=this.n;i++)
+    for(let i=0;i<this.n;i++)
     {
-      this.color.push(c[0]);
+      /*this.color.push(c[0]);
       this.color.push(c[1]);
-      this.color.push(c[2]); 
+      this.color.push(c[2]); */ 
+      this.vertices[i].setColor(c[0],c[1],c[2]); 
     } 
     //console.log(this.color+"\n"); 
   }
@@ -40,43 +58,100 @@ class Geometry {
    *random r, g, b value for them*/ 
   setRandomColor()
   {
-    for(let i=1;i<=this.n;i++)
+    for(let i=0;i<this.n;i++)
     {
       //r g and b are all values between 0-255 inclusive 
       let r = (Math.floor(Math.random()*Math.floor(256)))/256;
       let g = (Math.floor(Math.random()*Math.floor(256)))/256;
       let b = (Math.floor(Math.random()*Math.floor(256)))/256;  
-      this.color.push(r);
+      /*this.color.push(r);
       this.color.push(g); 
-      this.color.push(b);  
+      this.color.push(b); */  
+      //this.vertices[i].setColor = (r, g, b); 
+      this.vertices[i].setColor(r,g,b); 
     }
     //console.log(this.color+"\n"); 
   }
 
+  setArrayValues()
+  {
+    for(var i=0;i<this.vertices.length;i++)
+    {
+      //data.push(Array.prototype.slice.call(this.vertices[i].points.elements));
+      this.data.push(this.vertices[i].points[0],this.vertices[i].points[1],this.vertices[i].points[2] ); 
+      //uv_data.push(Array.prototype.slice.call(this.vertices[i].uv));
+      this.uv_data.push(this.vertices[i].uv); 
+      //color_data.push(Array.prototype.slice.call(this.vertices[i].color));
+      this.color_data.push(this.vertices[i].color[0], this.vertices[i].color[1],this.vertices[i].color[2]); 
+    }
+
+    this.data = new Float32Array(this.data);
+    this.uv_data = new Float32Array(this.uv_data);
+    this.color_data = new Float32Array(this.color_data);
+  }
 
   /**
    * Renders this Geometry within your webGL scene.
    * Sets color, translates vertices, sets vertices, and draws 
    */
   render() {
-    //tells glsl to draw this shape's color 
-    
-    /*THIS WILL NEED TO BE CHANGED*/ 
-    //sendUniformVec4ToGLSL(this.color, a_Color); 
-    
-    //tells glsl to apply this shapes transformation matrix
-    sendUniformMatToGLSL(this.modelMatrix, 'u_ModelMatrix');
-    //tells glsl to apply this shapes vertices  
-    let n = sendAttributeBufferToGLSL(this.vertices, this.n, 'a_Position');
-    //let m = sendAttributeBufferToGLSL(this.color, this.n, 'a_Color');  
-    //gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE*6, FSIZE*3); 
-    //draw the shape 
-    //var FSIZE = this.vertices.BYTES_PER_ELEMENT; 
-  //  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE*6, FSIZE*3);
-  //    gl.enableVertexAttribArray(a_Color); 
-    //gl.clear(gl.COLOR_BUFFER_BIT); 
+   /* let data = [];
+    let uv_data = []; 
+    let color_data = []; 
 
-    tellGLSLToDrawCurrentBuffer(n); 
+    for(var i=0;i<this.vertices.length;i++)
+    {
+      //data.push(Array.prototype.slice.call(this.vertices[i].points.elements));
+      data.push(this.vertices[i].points[0],this.vertices[i].points[1],this.vertices[i].points[2] ); 
+      //uv_data.push(Array.prototype.slice.call(this.vertices[i].uv));
+      uv_data.push(this.vertices[i].uv); 
+      //color_data.push(Array.prototype.slice.call(this.vertices[i].color));
+      color_data.push(this.vertices[i].color[0], this.vertices[i].color[1],this.vertices[i].color[2]); 
+    }
+
+    data = new Float32Array(data);
+    uv_data = new Float32Array(uv_data);
+    color_data = new Float32Array(color_data); */ 
+
+
+//    sendAttributeBufferToGLSL(data, 3, 'a_Position'); 
+    if(this instanceof TiltedCube)
+      {
+        if(this instanceof CheckerCube)
+        {
+          //this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
+          //useShader(gl, this.shader); 
+          send2DTextureToGLSL(this.texture, 0, 'u_Sampler')
+          sendAttributeBufferToGLSL(this.uv_data, 2, 'a_TexCoord', 2, 0); 
+        }
+        //sendIndicesBufferToGLSL(this.indices)
+        else{
+          sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
+        }
+        sendAttributeBufferToGLSL(this.data, 3, 'a_Position'); 
+        sendUniformMatToGLSL(this.modelMatrix, 'u_ModelMatrix');
+        //tellGLSLToDrawCurrentBuffer(36);
+         sendIndicesBufferToGLSL(this.indices)
+         gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+      }
+    /*This case applies to all non-cube shapes where we don't have to deal
+      with the possibility of applying textures or working with index buffers*/ 
+    else 
+      {
+       // this.shader = createShader(gl, ASSIGN4_VSHADER, ASSIGN4_FSHADER); 
+       // useShader(gl, this.shader); 
+        /*console.log("logging color_data in geometry render\n");
+        console.log(color_data); 
+        console.log("logging data in geometry render \n'");
+        console.log(data); */
+        sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
+        sendAttributeBufferToGLSL(this.data, 3, 'a_Position'); 
+        //tells glsl to apply this shapes transformation matrix
+        sendUniformMatToGLSL(this.modelMatrix, 'u_ModelMatrix');
+        //tells glsl to apply this shapes vertices  
+        //console.log(this.vertices); 
+        tellGLSLToDrawCurrentBuffer(this.n);
+      }
   }
 
   /**

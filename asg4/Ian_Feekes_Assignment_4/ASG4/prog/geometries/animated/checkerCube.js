@@ -12,12 +12,17 @@ class CheckerCube extends TiltedCube {
    * @constructor
    * @returns {CheckerCube}
    */
-  constructor() {
+  constructor(size,centerX,centerY,color,cFlag) {
     //
     // YOUR CODE HERE
     //
-    super(); 
+    super(size, centerX, centerY, color, cFlag); 
     this.generateUVCoordinates(); 
+    let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
+    let path = "./"+filename;
+    create2DTexture(path,gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT, (texture) => {
+         this.texture = texture; 
+       }); 
     // Recomendations: Might want to call generateUVCoordinates here.
   }
 
@@ -30,13 +35,36 @@ class CheckerCube extends TiltedCube {
     //
     // YOUR CODE HERE
     //
-    this.vertices = new Float32Array([
-      -.5, .5, 0.0, 1.0, 
-      -.5, -.5, 0.0, 0.0, 
-      .5, .5, 1.0, 1.0, 
-      .5, -.5, 1.0, 0.0,
-      ]);
-    this.n=4; 
+   // Front
+    this.vertices[0].uv = [0.0,  0.0]
+    this.vertices[1].uv = [1.0,  0.0]
+    this.vertices[2].uv = [1.0,  1.0]
+    this.vertices[3].uv = [0.0,  1.0]
+    // Back
+    this.vertices[4].uv = [0.0,  0.0]
+    this.vertices[5].uv = [1.0,  0.0]
+    this.vertices[6].uv = [1.0,  1.0]
+    this.vertices[7].uv = [0.0,  1.0]
+    // Top
+    this.vertices[8].uv = [0.0,  0.0]
+    this.vertices[9].uv = [1.0,  0.0]
+    this.vertices[10].uv = [1.0,  1.0]
+    this.vertices[11].uv = [0.0,  1.0]
+    // Bottom
+    this.vertices[12].uv = [0.0,  0.0]
+    this.vertices[13].uv = [1.0,  0.0]
+    this.vertices[14].uv = [1.0,  1.0]
+    this.vertices[15].uv = [0.0,  1.0]
+    // Right
+    this.vertices[16].uv = [0.0,  0.0]
+    this.vertices[17].uv = [1.0,  0.0]
+    this.vertices[18].uv = [1.0,  1.0]
+    this.vertices[19].uv = [0.0,  1.0]
+    // Left
+    this.vertices[20].uv = [0.0,  0.0]
+    this.vertices[21].uv = [1.0,  0.0]
+    this.vertices[22].uv = [1.0,  1.0]
+    this.vertices[23].uv = [0.0,  1.0]
     //create2DTexture(textureImage.value, gl.LINEAR, gl.NEAREST_MIPMAP_LINEAR, gl.REPEAT, gl.REPEAT, send2DTextureToGLSL); 
 
     // Recomendations: Remember uv coordinates are defined from 0.0 to 1.0.
@@ -45,7 +73,7 @@ class CheckerCube extends TiltedCube {
   /**
    * Renders CheckerCube.
    */
-  render() {
+  /*render() {
     //
     // YOUR CODE HERE
     //
@@ -62,5 +90,5 @@ class CheckerCube extends TiltedCube {
     // Recomendations: This will be the first time render will need to be
     // overloaded. Why? Because this is a textured geometry, not a geometry
     // which relies on a color value.
-  }
+  }*/
 }

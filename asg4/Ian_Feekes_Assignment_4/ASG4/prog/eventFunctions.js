@@ -75,7 +75,6 @@ function initEventHandelers() {
     }
     else colorButton.value="Solid Color D:"; 
   }
- 
 
   addGeometryToScene.addEventListener("click", function(event) {
     event.preventDefault();
@@ -95,9 +94,6 @@ function initEventHandelers() {
       currScene.addGeometry(lObj); 
        });
     });
-
-
-
   //testButton.onclick = function(){ addLoadedOBJ();}; 
 
   squareButton.onclick = function(){drawMode = "squares";}; 
@@ -158,10 +154,11 @@ function click(ev) {
   } 
   else if(drawMode =="cubes"){
     //let cu = new TiltedCube(pScale,x,y);
-    if(textureFile.value!=null)
+    if(textureFile.value)
     {
       console.log("texture found \n"); 
-      let tcu = new CheckerCube(pScale,x,y); 
+      let tcu = new CheckerCube(pScale,x,y, currColor,flag); 
+      currScene.addGeometry(tcu); 
     }
     else{
     let cu = new TiltedCube(pScale,x,y, currColor,flag);

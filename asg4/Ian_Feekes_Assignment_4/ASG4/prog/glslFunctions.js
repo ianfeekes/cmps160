@@ -110,17 +110,14 @@ function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, ca
  * @param {String} uniformName Name of the uniform variable recieving data
  */
  function sendUniformMatToGLSL(val, uniformName) {
-   //
-   // YOUR CODE HERE
-   //
-   var uName = gl.getUniformLocation(gl.program, uniformName);
+  //Get the uniform and check its location 
+  var uName = gl.getUniformLocation(gl.program, uniformName);
   if (uName < 0) {
     console.log('Failed to get the storage location of the attribute being sent to glsl\n');
     return -1;
   }
-
-   gl.uniformMatrix4fv(uName, false, val.elements); 
-   // Recomendations: This is going to be very similar to sending a float/vec.
+  //send the matrix to glsl 
+  gl.uniformMatrix4fv(uName, false, val.elements); 
 }
 
 /* Sends data to an attribute variable using a buffer
@@ -128,17 +125,15 @@ function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, ca
  * throughout this programming assignment. It essentially just throws
  * data into glsl in preparation for rendering. 
  */ 
-function sendAttributeBufferToGLSL(data, dataCount, attribName) {
+/*function sendAttributeBufferToGLSL(data, dataCount, attribName) {
   //contain data within vertices for easier processing
   var vertices = new Float32Array(data); 
-  //console.log(vertices); 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) {
     console.log('Failed to create the buffer object');
     return -1;
   }
-
   // Bind the buffer object to target
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   // Write date into the buffer object
@@ -151,22 +146,40 @@ function sendAttributeBufferToGLSL(data, dataCount, attribName) {
     return -1;
   }
   //Points the attribute to the pointer
-  gl.vertexAttribPointer(aName, 3, gl.FLOAT, false, FSIZE*6, 0);
-  gl.enableVertexAttribArray(aName);
+  gl.vertexAttribPointer(aName, dataCount, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(aName); 
+}*/
 
-  var a_Color = gl.getAttribLocation(gl.program, 'a_Color');
-  if(a_Color < 0) {
-    console.log('Failed to get the storage location of a_Color');
-    return -1;
+function sendAttributeBufferToGLSL(data, dataCount, attribName, stride = 0, offset = 0) {
+  // Create a buffer object
+ // console.log("in sendAttributeBufferToGLSL. Printing data...\n");
+  //console.log(data); 
+  let buffer = gl.createBuffer();
+  if (!buffer) {
+    console.log('Failed to create the buffer object ')
+    return
   }
-  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE*6, FSIZE*3); 
-  gl.enableVertexAttribArray(a_Color); 
-  /*THIS WILL DIE*/ 
-  //gl.drawArrays(gl.TRIANGLES, 0, 4);
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  // Write date into the buffer
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
+  let attribute = gl.getAttribLocation(gl.program, attribName);
+  if (attribute < 0) {
+    console.log('Failed to get the storage location of '+attribName)
+    return
+  }
 
-  // returns the data count passed in
-  return dataCount; 
+  let FSIZE = data.BYTES_PER_ELEMENT;
+  // Assign the buffer object to attribute variable
+  gl.vertexAttribPointer(attribute, dataCount, gl.FLOAT, false, FSIZE*stride, FSIZE*offset);
+  gl.enableVertexAttribArray(attribute);
+}
+
+function sendIndicesBufferToGLSL(indices) {
+  const indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 }
 
 
@@ -177,12 +190,8 @@ function sendAttributeBufferToGLSL(data, dataCount, attribName) {
  *
  * Simply connects the dots, with pointCount specifying how many dots to connect 
  */
-function tellGLSLToDrawCurrentBuffer(pointCount) {
- // console.log("telling glsl to draw current buffer \n"); 
- // console.log("point count is: "+pointCount+"\n"); 
- 
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, pointCount); 
- //gl.drawArrays(gl.TRIANGLES, 0, pointCount); 
+function tellGLSLToDrawCurrentBuffer(pointCount) { 
+ gl.drawArrays(gl.TRIANGLES, 0, pointCount); 
 }
 
 /**specified
