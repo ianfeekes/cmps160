@@ -19,8 +19,8 @@ class MultiTextureCube extends TiltedCube {
     super(size, centerX, centerY, color, cFlag); 
     this.generateUVCoordinates();
     super.setUVArray(); 
-    let filename = "checkerboard.png"; 
-    //let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
+    //let filename = "checkerboard.png"; 
+    let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
     let path = "./"+filename; 
     create2DTexture(path, gl.Linear, gl.Linear, gl.REPEAT, gl.REPEAT, (texture) => {
        this.texture = texture
