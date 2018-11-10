@@ -109,7 +109,7 @@ function initEventHandelers() {
   /*initialize the point size to the default slider value of 50px xy*/ 
   changePointSize(sizeSlider.value/1.5); 
 
-  let tcu = new CheckerCube(pScale,0,0, currColor,flag); 
+  let tcu = new CheckerCube(pScale,0,0, currColor,1); 
      //tcu.generateSpecialUV();
      //let tcu = new MultiTextureCube(pScale, x, y, currColor, flag); 
       currScene.addGeometry(tcu); 
