@@ -97,10 +97,10 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
     //  4. Set the texture's image to the loaded image using gl.texImage2D
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     //  5. Pass your completed texture object to your callback function
-    callback(texture)
+    callback(texture);
   }
 
-  image.src = imgPath
+  image.src = imgPath;
 }
 
   //imgPath; //This may need to be put in quotes, not sure
@@ -118,7 +118,6 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
   //  5. Pass your completed texture object to your callback function
   //
   // NOTE: This function should not return anything.
-}
 
 
  /**
