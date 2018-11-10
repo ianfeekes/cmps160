@@ -23,6 +23,7 @@ class CheckerCube extends TiltedCube {
     //Determining how we will be imaging each face of the cube 
     if(cFlag==1)this.generateSpecialUV(); 
     else(this.generateUVCoordinates()); 
+    
     super.setUVArray();
     let path;  
      if(!textureFile.value){path = "./flcl.jpg"}
@@ -83,6 +84,8 @@ class CheckerCube extends TiltedCube {
     // YOUR CODE HERE
     //
    // Front
+   console.log("generating normal ones\n"); 
+
     this.vertices[0].uv = [0.0,  0.0]
     this.vertices[1].uv = [1.0,  0.0]
     this.vertices[2].uv = [1.0,  1.0]
