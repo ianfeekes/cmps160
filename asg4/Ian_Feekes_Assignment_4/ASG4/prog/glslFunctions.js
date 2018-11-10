@@ -16,8 +16,9 @@
  * textureUnit location (0 - 7) will reside
  */
 function send2DTextureToGLSL(val, textureUnit, uniformName) {
-  console.log("logging val in send2DTextureToGLSL...\n");
-  console.log(val); 
+  //console.log("logging val in send2DTextureToGLSL...\n");
+  //console.log(val); 
+
   var uName = gl.getUniformLocation(gl.program, uniformName);
   if (uName < 0) {
     console.log('Failed to get the storage location of the attribute being sent to glsl\n');
@@ -60,7 +61,7 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
  * @param callback A callback function which executes with the completed texture
  * object passed as a parameter.
  */
-function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, callback) {
+/*function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, callback) {
   var image = new Image(); 
   var texture; 
   image.onload =function(){
@@ -72,9 +73,35 @@ function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, ca
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapSParam);   //pass in the wrap s param
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapTParam);   //pass in the wrap t param
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,image); 
+    console.log("in create2DTexture logging texture value...\n"); 
+    console.log(texture); 
+
     callback(texture); 
   }; 
-  image.src = imgPath; 
+  image.src = imgPath; */ 
+  function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, callback) {
+  let image = new Image();
+
+  image.onload = function() {
+    //  1. create a texture object by saving the result of gl.createTexture()
+    var texture = gl.createTexture();
+    //  2. Flip your image's y-axis and bind your texture object to gl.TEXTURE_2D
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    //  3. Using multiple calls to gl.texParameteri, pass magParam, minParam,
+    //     wrapSParam, and wrapTParam.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magParam);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minParam);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapSParam);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapTParam);
+    //  4. Set the texture's image to the loaded image using gl.texImage2D
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    //  5. Pass your completed texture object to your callback function
+    callback(texture)
+  }
+
+  image.src = imgPath
+}
 
   //imgPath; //This may need to be put in quotes, not sure
   //callback(texture,0,u_Sampler);
