@@ -20,6 +20,7 @@ class MultiTextureCube extends TiltedCube {
     this.generateUVCoordinates();
     super.setUVArray(); 
     let filename = "checkerboard.png"; 
+    //let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
     let path = "./"+filename; 
     create2DTexture(path, gl.Linear, gl.Linear, gl.REPEAT, gl.REPEAT, (texture) => {
        this.texture = texture
@@ -36,7 +37,7 @@ class MultiTextureCube extends TiltedCube {
    * @private
    */
   generateUVCoordinates() {
-    /* this.vertices[0].uv = [0.0,  0.0];
+     this.vertices[0].uv = [0.0,  0.0];
      this.vertices[1].uv = [3.0,  0.0];
      this.vertices[2].uv = [3.0,  3.0];
      this.vertices[3].uv = [0.0,  3.0];
@@ -64,12 +65,12 @@ class MultiTextureCube extends TiltedCube {
      this.vertices[20].uv = [0.0,  0.0];
      this.vertices[21].uv = [1.0,  0.0];
      this.vertices[22].uv = [1.0,  1.0];
-     this.vertices[23].uv = [0.0,  1.0]; */ 
+     this.vertices[23].uv = [0.0,  1.0]; 
 
      //console.log("In multiTextureCube logging vertices...\n"); 
      //console.log(this.vertices); 
 
-      this.vertices[0].uv = [0.0,  0.0]
+   /*   this.vertices[0].uv = [0.0,  0.0]
     this.vertices[1].uv = [1.0,  0.0]
     this.vertices[2].uv = [1.0,  1.0]
     this.vertices[3].uv = [0.0,  1.0]
@@ -97,81 +98,7 @@ class MultiTextureCube extends TiltedCube {
     this.vertices[20].uv = [0.0,  0.0]
     this.vertices[21].uv = [1.0,  0.0]
     this.vertices[22].uv = [1.0,  1.0]
-    this.vertices[23].uv = [0.0,  1.0]
-  }
-
-
- /*  loadTexture(gl,n,texture,u_Sampler,image){
-       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); 
-      gl.activeTexture(gl.TEXTURE0); 
-      gl.bindTexture(gl.TEXTURE_2D, texture); 
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); 
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGV, gl.UNSIGNED_BYTE, image); 
-      gl.uniform1i(u_Sampler,0); 
-
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); 
-    }*/ 
-
-  /**
-   * Renders MultiTextureCube.
-   */
-  render() {
-    //
-    // YOUR NAME HERE
-    //
-    let n = this.n; 
-    var vertexTexCoordBuffer = gl.createBuffer(); 
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexTexCoordBuffer); 
-    gl.bufferData(gl.ARRAY_BUFFER, this.vertices, gl.STATIC_DRAW); 
-    var FSIZE = this.vertices.BYTES_PER_ELEMENT; 
-    gl.vertexAttribPointer(a_Position,2,gl.FLOAT, false, FSIZE*4, 0); 
-    gl.enableVertexAttribArray(a_Position); 
-    var a_TexCoord=gl.getAttribLocation(gl.program, 'a_TexCoord');
-    gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE*4, FSIZE*2); 
-    gl.enableVertexAttribArray(a_TexCoord); 
-
-    //super.render(); 
-    var texture = gl.createTexture(); 
-    var u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler'); 
-    var image = new Image(); 
-    image.onload = function()
-    {
-      /*gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); 
-      gl.activeTexture(gl.TEXTURE0); 
-      gl.bindTexture(gl.TEXTURE_2D, texture); 
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); 
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGV, gl.UNSIGNED_BYTE, image); 
-      gl.uniform1i(u_Sampler,0); 
-
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.n); */
-      loadTexture(gl,n,texture,u_Sampler,image); 
-    };
-    
-   // image.src  = '../../../external/textures/checkerboard.png';   
-   image.src = this.texturePath; 
-
-
-
-  /*  var vertexTexBuffer = gl.createBuffer(); 
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexTexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.vertices, gl.STATIC_DRAW); 
-
-    var FSIZE = this.vertices.BYTES_PER_ELEMENT; 
-    gl.vertexAttribPointer(a_Position,2,gl.FLOAT,false,FSIZE*4,0);
-    gl.enableVertexAttribArray(a_Position); 
-    var a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
-    gl.vertexAttribPointer(a_TexCoord,2,gl.FLOAT,false,FSIZE*4, FSIZE*2); 
-    gl.enableVertexAttribArray(a_TexCoord);
-
-    create2DTexture(this.texturePath, gl.LINEAR, gl.NEAREST_MIPMAP_LINEAR, gl.REPEAT, gl.REPEAT, send2DTextureToGLSL); 
-    tellGLSLToDrawCurrentBuffer(this.n); */ 
-
-
-
-    // Recomendations: This will be the first time render will need to be
-    // overloaded. Why? Because this is a textured geometry, not a geometry
-    // which relies on a color value. Might want to use
+    this.vertices[23].uv = [0.0,  1.0] */ 
   }
 
 }
