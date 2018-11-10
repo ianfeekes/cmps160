@@ -67,6 +67,9 @@ class MultiTextureCube extends TiltedCube {
      this.vertices[21].uv = [1.0,  0.0];
      this.vertices[22].uv = [1.0,  1.0];
      this.vertices[23].uv = [0.0,  1.0];
+
+     console.log("In multiTextureCube logging vertices...\n"); 
+     console.log(this.vertices); 
   }
 
 
