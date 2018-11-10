@@ -37,7 +37,7 @@ class MultiTextureCube extends TiltedCube {
    * @private
    */
   generateUVCoordinates() {
-     this.vertices[0].uv = [0.0,  0.0];
+     /*this.vertices[0].uv = [0.0,  0.0];
      this.vertices[1].uv = [3.0,  0.0];
      this.vertices[2].uv = [3.0,  3.0];
      this.vertices[3].uv = [0.0,  3.0];
@@ -65,12 +65,12 @@ class MultiTextureCube extends TiltedCube {
      this.vertices[20].uv = [0.0,  0.0];
      this.vertices[21].uv = [1.0,  0.0];
      this.vertices[22].uv = [1.0,  1.0];
-     this.vertices[23].uv = [0.0,  1.0]; 
+     this.vertices[23].uv = [0.0,  1.0]; */ 
 
      //console.log("In multiTextureCube logging vertices...\n"); 
      //console.log(this.vertices); 
 
-   /*   this.vertices[0].uv = [0.0,  0.0]
+      this.vertices[0].uv = [0.0,  0.0]
     this.vertices[1].uv = [1.0,  0.0]
     this.vertices[2].uv = [1.0,  1.0]
     this.vertices[3].uv = [0.0,  1.0]
@@ -98,7 +98,7 @@ class MultiTextureCube extends TiltedCube {
     this.vertices[20].uv = [0.0,  0.0]
     this.vertices[21].uv = [1.0,  0.0]
     this.vertices[22].uv = [1.0,  1.0]
-    this.vertices[23].uv = [0.0,  1.0] */ 
+    this.vertices[23].uv = [0.0,  1.0]  
   }
 
 }
