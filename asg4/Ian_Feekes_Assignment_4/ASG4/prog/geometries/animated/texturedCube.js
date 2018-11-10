@@ -16,8 +16,6 @@ class MultiTextureCube extends TiltedCube {
     //
     // YOUR CODE HERE
     //
-    //console.log("creating multiTextureCube"); 
-    //console.log("texture path is: "+texturePath+"\n"); 
     super(size, centerX, centerY, color, cFlag); 
     this.generateUVCoordinates();
     super.setUVArray(); 
