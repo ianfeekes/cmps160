@@ -21,6 +21,9 @@ class CheckerCube extends TiltedCube {
     super(size, centerX, centerY, color, cFlag); 
     //this.generateUVCoordinates(); \
     //Determining how we will be imaging each face of the cube 
+    console.log("logging cFlag...\n");
+    console.log(cFlag); 
+
     if(cFlag==1)this.generateSpecialUV(); 
     else(this.generateUVCoordinates()); 
     

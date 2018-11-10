@@ -163,7 +163,7 @@ function click(ev) {
     if(textureFile.value)
     {
       //console.log("texture found \n"); 
-     let tcu = new CheckerCube(pScale,x,y, currColor,flag); 
+     let tcu = new CheckerCube(pScale,x,y, currColor,0); 
      //tcu.generateSpecialUV();
      //let tcu = new MultiTextureCube(pScale, x, y, currColor, flag); 
       currScene.addGeometry(tcu); 
