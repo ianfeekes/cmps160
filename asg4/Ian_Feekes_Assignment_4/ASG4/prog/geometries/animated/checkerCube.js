@@ -16,6 +16,7 @@ class CheckerCube extends TiltedCube {
     //
     // YOUR CODE HERE
     //
+    gl.enable(GL_DEPTH_TEST); 
     super(size, centerX, centerY, color, cFlag); 
     //this.generateUVCoordinates(); \
     this.generateSpecialUV(); 
