@@ -24,6 +24,8 @@ class CheckerCube extends TiltedCube {
     super.setUVArray(); 
     let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
     let path = "./"+filename;
+    console.log("logging path...\n"); 
+    console.log(path); 
     create2DTexture(path,gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT, (texture) => {
          this.texture = texture; 
        }); 

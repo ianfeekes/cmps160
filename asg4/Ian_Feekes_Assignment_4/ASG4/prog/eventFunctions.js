@@ -156,7 +156,7 @@ function click(ev) {
     //let cu = new TiltedCube(pScale,x,y);
     if(textureFile.value)
     {
-      console.log("texture found \n"); 
+      //console.log("texture found \n"); 
      let tcu = new CheckerCube(pScale,x,y, currColor,flag); 
      //tcu.generateSpecialUV();
      //let tcu = new MultiTextureCube(pScale, x, y, currColor, flag); 
