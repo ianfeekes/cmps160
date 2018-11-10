@@ -120,12 +120,12 @@ class Geometry {
         if(this instanceof CheckerCube)
         {
           //this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
-          //useShader(gl, this.shader); 
+          useShader(gl, this.shader); 
           send2DTextureToGLSL(this.texture, 0, 'u_Sampler')
           sendAttributeBufferToGLSL(this.uv_data, 2, 'a_TexCoord', 2, 0); 
         }
-        //sendIndicesBufferToGLSL(this.indices)
-        else{
+        else
+        {
           sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
         }
         sendAttributeBufferToGLSL(this.data, 3, 'a_Position'); 

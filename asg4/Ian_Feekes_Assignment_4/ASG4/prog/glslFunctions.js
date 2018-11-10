@@ -31,7 +31,7 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
   else if(textureUnit==7) gl.activeTexture(gl.TEXTURE7); 
 
   gl.bindTexture(gl.TEXTURE_2D, val); 
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); 
+ // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); 
   //l.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, );
   gl.uniform1i(u_Sampler, textureUnit); 
   // Recomendations: Within this funciton, you should:
@@ -42,18 +42,6 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
   //    5. Send the texture unit (textureUnit not the one you found) to your
   //       uniform location.
 }
-
-/*THIS WILL EVENTUALLY DIE*/ 
-function loadTexture(gl,n,texture,u_Sampler,image){
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); 
-      gl.activeTexture(gl.TEXTURE0); 
-      gl.bindTexture(gl.TEXTURE_2D, texture); 
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); 
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB, gl.UNSIGNED_BYTE, image); 
-      gl.uniform1i(u_Sampler,0); 
-
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); 
-    }
 
 /**
  * Creates a WebGl 2D texture object.
@@ -76,16 +64,18 @@ function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, ca
   image.onload =function(){
     texture = gl.createTexture();          //create a texture object
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); //flip the image's y axis
+    gl.bindTexture(gl.TEXTURE_2D, texture); 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magParam); //pass in the magnification param
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minParam); //pass in the minimization param
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapSParam);   //pass in the wrap s param
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapTParam);   //pass in the wrap t param
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,image); 
+    callback(texture); 
   }; 
-  image.src = "external/textures/checkerboard.png" 
+  image.src = imgPath; 
 
   //imgPath; //This may need to be put in quotes, not sure
-  callback(texture,0,u_Sampler);
+  //callback(texture,0,u_Sampler);
   // Recomendations: This function should see you creating an Image object,
   // setting that image object's ".onload" to an anonymous function containing
   // the rest of your code, and setting that image object's ".src" to imgPath.
