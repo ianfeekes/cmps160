@@ -17,7 +17,8 @@ class CheckerCube extends TiltedCube {
     // YOUR CODE HERE
     //
     super(size, centerX, centerY, color, cFlag); 
-    this.generateUVCoordinates(); 
+    //this.generateUVCoordinates(); \
+    this.generateSpecialUV(); 
     super.setUVArray(); 
     let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
     let path = "./"+filename;
@@ -60,7 +61,7 @@ class CheckerCube extends TiltedCube {
      this.vertices[21].uv = [1.0,  0.0];
      this.vertices[22].uv = [1.0,  1.0];
      this.vertices[23].uv = [0.0,  1.0];
-     super.setUVArray(); 
+     //super.setUVArray(); 
   }
 
 
