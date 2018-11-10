@@ -29,15 +29,18 @@ class Geometry {
     {
        if(this instanceof CheckerCube)
         {
+          console.log("creating texture shaders for checkered cube \n"); 
           this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
-          useShader(gl, this.shader); 
+          //useShader(gl, this.shader); 
         }
+        else this.shader = createShader(gl, ASSIGN4_VSHADER, ASSIGN4_FSHADER); 
     }
     else
     {
        this.shader = createShader(gl, ASSIGN4_VSHADER, ASSIGN4_FSHADER); 
-      useShader(gl, this.shader); 
+      //useShader(gl, this.shader); 
     }
+    useShader(gl, this.shader); 
   }
 
   //Sets color 
@@ -115,7 +118,7 @@ class Geometry {
 
 
 //    sendAttributeBufferToGLSL(data, 3, 'a_Position'); 
-    if(this instanceof TiltedCube || this instanceof CheckerCube)
+    if(this instanceof TiltedCube)
       {
         if(this instanceof CheckerCube)
         {
@@ -126,6 +129,7 @@ class Geometry {
         }
         else
         {
+          useShader(gl, this.shader); 
           console.log("tilted cube so sending color buffer...\n"); 
           sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
         }
