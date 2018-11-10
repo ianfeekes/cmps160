@@ -27,9 +27,9 @@ class Geometry {
     this.color_data = []; 
     if(this instanceof TiltedCube)
     {
-       if(this instanceof CheckerCube)
+       if(this instanceof CheckerCube || this instanceof MultiTextureCube)
         {
-          console.log("creating texture shaders for checkered cube \n"); 
+          //console.log("creating texture shaders for checkered cube \n"); 
           this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
           //useShader(gl, this.shader); 
         }
