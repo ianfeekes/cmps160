@@ -125,7 +125,7 @@ class Geometry {
           //this.shader = createShader(gl, ASSIGN4_VSHADER_TEXTURE, ASSIGN4_FSHADER_TEXTURE);
           //useShader(gl, this.shader); 
           send2DTextureToGLSL(this.texture, 0, 'u_Sampler')
-          console.log(this.uv_data); 
+          //console.log(this.uv_data); 
           sendAttributeBufferToGLSL(this.uv_data, 2, 'a_TexCoord', 2, 0); 
         }
         else
