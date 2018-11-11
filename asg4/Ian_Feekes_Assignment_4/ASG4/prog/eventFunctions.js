@@ -79,11 +79,8 @@ function initEventHandelers() {
   addGeometryToScene.addEventListener("click", function(event) {
     event.preventDefault();
     loadFile(objFile.value.split(/(\\|\/)/g).pop(), function(textData){
-      let lObj = new LoadedOBJ(textData);
-      /*lObj.updateAnimation = function(){
-        this.modelMatrix.rotate(1,0,1,1);
-      };*/ 
-      if(textureFile.value>0)
+      let lObj = new LoadedOBJ(textData); 
+      if(textureFile.value)
       {
         let pathName = textureFile.value.split(/(\\|\/)/g).pop();
         let readablePath = "./"+pathName; 
@@ -91,10 +88,12 @@ function initEventHandelers() {
           lObj.texture = texture; 
         });
       }
+      else{
+          //set the vertex coloring 
+      }
       currScene.addGeometry(lObj); 
        });
     });
-  //testButton.onclick = function(){ addLoadedOBJ();}; 
 
   squareButton.onclick = function(){drawMode = "squares";}; 
   triangleButton.onclick = function(){drawMode = "triangles";};

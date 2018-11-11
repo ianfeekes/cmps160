@@ -14,10 +14,6 @@ class TiltedCube extends Geometry {
   constructor(size, centerX, centerY,color,cFlag) {
     super();
     this.n=24; 
-
-     //console.log(this.color); 
-    //this.color.push(.5); 
-
     this.generateCubeVertices(centerX, centerY, size, this.color);
     this.size=size;
     this.centerX=centerX;
@@ -41,7 +37,6 @@ class TiltedCube extends Geometry {
    */
   generateCubeVertices(centerX, centerY, size, color) {
     size/=150; 
-    //vertex coordinates and color 
     for(let i=0;i<24;i++)
     {
     	this.vertices[i]=new Vertex(); 

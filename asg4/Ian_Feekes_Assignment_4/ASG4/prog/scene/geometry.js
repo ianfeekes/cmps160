@@ -23,7 +23,7 @@ class Geometry {
     this.SIZE_STEP = 0;
     this.shader=null;   //We will have to start using multipl shaders for textures
     this.data = [];
-    this.uv_data = []; 
+    this.uvVals = []; 
     this.color_data = []; 
     if(this instanceof TiltedCube)
     {
@@ -67,10 +67,6 @@ class Geometry {
       let r = (Math.floor(Math.random()*Math.floor(256)))/256;
       let g = (Math.floor(Math.random()*Math.floor(256)))/256;
       let b = (Math.floor(Math.random()*Math.floor(256)))/256;  
-      /*this.color.push(r);
-      this.color.push(g); 
-      this.color.push(b); */  
-      //this.vertices[i].setColor = (r, g, b); 
       this.vertices[i].setColor(r,g,b); 
     }
     //console.log(this.color+"\n"); 
@@ -82,34 +78,22 @@ class Geometry {
   {
     for(let i=0;i<this.vertices.length;i++)
     {
-      this.uv_data.push(this.vertices[i].uv[0], this.vertices[i].uv[1]); 
+      this.uvVals.push(this.vertices[i].uv[0], this.vertices[i].uv[1]); 
     }
-    this.uv_data = new Float32Array(this.uv_data);
+    this.uvVals = new Float32Array(this.uvVals);
   }
 
   setArrayValues()
   {
     for(var i=0;i<this.vertices.length;i++)
     {
-      //data.push(Array.prototype.slice.call(this.vertices[i].points.elements));
       this.data.push(this.vertices[i].points[0],this.vertices[i].points[1],this.vertices[i].points[2] ); 
-      //uv_data.push(Array.prototype.slice.call(this.vertices[i].uv));
-      //console.log(this.vertices[i].uv[0]); 
-      //console.log(this.vertices[i].uv[1]);
-      //this.uv_data.push(this.vertices[i].uv[0], this.vertices[i].uv[1]); 
-      //color_data.push(Array.prototype.slice.call(this.vertices[i].color));
       this.color_data.push(this.vertices[i].color[0], this.vertices[i].color[1],this.vertices[i].color[2]); 
     }
-
     //console.log("In setArrayValues logging  vertices uv data before initializing as float32\n"); 
-    //console.log(this.vertices); 
-    //console.log(this.uv_data); 
-
+    //console.log(this.vertices);  
     this.data = new Float32Array(this.data);
-    //this.uv_data = new Float32Array(this.uv_data);
     this.color_data = new Float32Array(this.color_data);
-    //console.log("In setArrayValues logging uv data\n"); 
-    //console.log(this.uv_data); 
   }
 
   /**
@@ -126,7 +110,7 @@ class Geometry {
           //useShader(gl, this.shader); 
           send2DTextureToGLSL(this.texture, 0, 'u_Sampler')
           //console.log(this.uv_data); 
-          sendAttributeBufferToGLSL(this.uv_data, 2, 'a_TexCoord', 2, 0); 
+          sendAttributeBufferToGLSL(this.uvVals, 2, 'a_TexCoord', 2, 0); 
         }
         else
         {
@@ -144,18 +128,11 @@ class Geometry {
       with the possibility of applying textures or working with index buffers*/ 
     else 
       {
-       // this.shader = createShader(gl, ASSIGN4_VSHADER, ASSIGN4_FSHADER); 
-       // useShader(gl, this.shader); 
-        /*console.log("logging color_data in geometry render\n");
-        console.log(color_data); 
-        console.log("logging data in geometry render \n'");
-        console.log(data); */
         sendAttributeBufferToGLSL(this.color_data, 3, 'a_Color');
         sendAttributeBufferToGLSL(this.data, 3, 'a_Position'); 
         //tells glsl to apply this shapes transformation matrix
         sendUniformMatToGLSL(this.modelMatrix, 'u_ModelMatrix');
         //tells glsl to apply this shapes vertices  
-        //console.log(this.vertices); 
         tellGLSLToDrawCurrentBuffer(this.n);
       }
   }

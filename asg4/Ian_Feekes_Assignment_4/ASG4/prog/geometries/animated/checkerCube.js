@@ -2,7 +2,7 @@
  * A tilted cube that has a checkerboard texture applied to it. A subclass of
  * TiltedCube.
  *
- * @author "Your Name Here"
+ * @author "Ian Feekes"
  * @this {CheckerCube}
  */
 class CheckerCube extends TiltedCube {
@@ -13,33 +13,23 @@ class CheckerCube extends TiltedCube {
    * @returns {CheckerCube}
    */
   constructor(size,centerX,centerY,color,cFlag) {
-    //
-    // YOUR CODE HERE
-    //
-    //gl.glEnable(GL_DEPTH_TEST); 
      gl.enable(gl.DEPTH_TEST);
     super(size, centerX, centerY, color, cFlag); 
-    //this.generateUVCoordinates(); \
-    //Determining how we will be imaging each face of the cube 
-    //console.log("logging cFlag...\n");
-    //console.log(cFlag); 
-
     if(cFlag==1)this.generateSpecialUV(); 
-    else(this.generateUVCoordinates()); 
-    
+    else(this.generateUVCoordinates());    
     super.setUVArray();
     let path;  
-     if(!textureFile.value){path = "./flcl.jpg"}
-      else{
-    let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
+    if(!textureFile.value){path = "./flcl.jpg"}
+    else
+    {
+     let filename= document.getElementById('textureImage').value.split(/(\\|\/)/g).pop();
      path = "./"+filename; 
-  }
-    create2DTexture(path,gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT, (texture) => {
+    }
+    //callback simply sets the objects texture. This is ripped from the book 
+    create2DTexture(path,gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT, (texture) => 
+    {
          this.texture = texture; 
-       }); 
-
-
-    // Recomendations: Might want to call generateUVCoordinates here.
+    }); 
   }
 
   //brute force attempt at generating cube faces of different patterns 
