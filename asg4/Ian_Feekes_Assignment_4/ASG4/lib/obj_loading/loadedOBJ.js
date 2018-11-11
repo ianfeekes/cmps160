@@ -20,16 +20,16 @@ class LoadedOBJ extends Geometry {
 
     // Construct the necessary amount of vertex objects within this.vertices
     for (var i = 0; i < objMesh.indices.length; i++) {
-      //console.log("vertex number: "+i+"\n"); 
       this.vertices[i] = new Vertex();
     }
-    this.n=this.objMesh.indices.lenth;
+    this.n=this.objMesh.indices.length;
     // Add the vertex points, normals, and uv coordinates in OBJ
     var transAndScaleVal = this.addVertexPoints(objMesh.indices, objMesh.vertices);
     this.addVertexNormals(objMesh.indices, objMesh.vertexNormals);
     this.addVertexTextureCoordinates(objMesh.indices, objMesh.textures);
     // Modify loadedOBJ's modelMatrix to present OBJ correctly
     super.setRandomColor(); 
+    console.log("about to call setArrayValues\n"); 
     super.setArrayValues(); 
     this.moveOBJToCenterOfScreen(transAndScaleVal[0]);
     this.scaleOBJToFitOnScreen(transAndScaleVal[1]);
