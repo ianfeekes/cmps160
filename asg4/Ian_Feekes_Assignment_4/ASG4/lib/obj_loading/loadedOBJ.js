@@ -23,12 +23,13 @@ class LoadedOBJ extends Geometry {
       //console.log("vertex number: "+i+"\n"); 
       this.vertices[i] = new Vertex();
     }
-    this.n=this.vertices.length;
+    this.n=this.objMesh.indices.lenth;
     // Add the vertex points, normals, and uv coordinates in OBJ
     var transAndScaleVal = this.addVertexPoints(objMesh.indices, objMesh.vertices);
     this.addVertexNormals(objMesh.indices, objMesh.vertexNormals);
     this.addVertexTextureCoordinates(objMesh.indices, objMesh.textures);
     // Modify loadedOBJ's modelMatrix to present OBJ correctly
+    super.setRandomColor(); 
     super.setArrayValues(); 
     this.moveOBJToCenterOfScreen(transAndScaleVal[0]);
     this.scaleOBJToFitOnScreen(transAndScaleVal[1]);
