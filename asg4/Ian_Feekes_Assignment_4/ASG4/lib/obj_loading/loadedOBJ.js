@@ -15,9 +15,6 @@ class LoadedOBJ extends Geometry {
    */
   constructor(objStr) {
     super();
-
-    console.log("I am a new loaded object with a name: "+objStr+"\n"); 
-
     // Construct the Mesh object containg the OBJ file's information
     var objMesh = new OBJ.Mesh(objStr);
 
@@ -26,13 +23,13 @@ class LoadedOBJ extends Geometry {
       //console.log("vertex number: "+i+"\n"); 
       this.vertices[i] = new Vertex();
     }
-
+    this.n=this.vertices.length;
     // Add the vertex points, normals, and uv coordinates in OBJ
     var transAndScaleVal = this.addVertexPoints(objMesh.indices, objMesh.vertices);
     this.addVertexNormals(objMesh.indices, objMesh.vertexNormals);
     this.addVertexTextureCoordinates(objMesh.indices, objMesh.textures);
-
     // Modify loadedOBJ's modelMatrix to present OBJ correctly
+    super.setArrayValues(); 
     this.moveOBJToCenterOfScreen(transAndScaleVal[0]);
     this.scaleOBJToFitOnScreen(transAndScaleVal[1]);
   }
