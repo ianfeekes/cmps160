@@ -61,63 +61,26 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
  * @param callback A callback function which executes with the completed texture
  * object passed as a parameter.
  */
-/*function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, callback) {
-  var image = new Image(); 
-  var texture; 
-  image.onload =function(){
-    texture = gl.createTexture();          //create a texture object
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); //flip the image's y axis
-    gl.bindTexture(gl.TEXTURE_2D, texture); 
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magParam); //pass in the magnification param
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minParam); //pass in the minimization param
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapSParam);   //pass in the wrap s param
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapTParam);   //pass in the wrap t param
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,image); 
-    console.log("in create2DTexture logging texture value...\n"); 
-    console.log(texture); 
-
-    callback(texture); 
-  }; 
-  image.src = imgPath; */ 
   function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, callback) {
   let image = new Image();
 
   image.onload = function() {
-    //  1. create a texture object by saving the result of gl.createTexture()
     var texture = gl.createTexture();
-    //  2. Flip your image's y-axis and bind your texture object to gl.TEXTURE_2D
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    //  3. Using multiple calls to gl.texParameteri, pass magParam, minParam,
-    //     wrapSParam, and wrapTParam.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magParam);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minParam);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapSParam);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapTParam);
-    //  4. Set the texture's image to the loaded image using gl.texImage2D
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-    //  5. Pass your completed texture object to your callback function
+    //console.log("in create2DTexture logging texture value...\n"); 
+    //console.log(texture); 
     callback(texture);
   }
 
   image.src = imgPath;
 }
 
-  //imgPath; //This may need to be put in quotes, not sure
-  //callback(texture,0,u_Sampler);
-  // Recomendations: This function should see you creating an Image object,
-  // setting that image object's ".onload" to an anonymous function containing
-  // the rest of your code, and setting that image object's ".src" to imgPath.
-  //
-  // Within the anonymous function:
-  //  1. create a texture object by saving the result of gl.createTexture()
-  //  2. Flip your image's y-axis and bind your texture object to gl.TEXTURE_2D
-  //  3. Using multiple calls to gl.texParameteri, pass magParam, minParam,
-  //     wrapSParam, and wrapTParam.
-  //  4. Set the texture's image to the loaded image using gl.texImage2D
-  //  5. Pass your completed texture object to your callback function
-  //
-  // NOTE: This function should not return anything.
 
 
  /**
@@ -138,58 +101,22 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
   gl.uniformMatrix4fv(uName, false, val.elements); 
 }
 
-/* Sends data to an attribute variable using a buffer
- * This is one of the most challenging functions to properly impliment
- * throughout this programming assignment. It essentially just throws
- * data into glsl in preparation for rendering. 
- */ 
-/*function sendAttributeBufferToGLSL(data, dataCount, attribName) {
-  //contain data within vertices for easier processing
-  var vertices = new Float32Array(data); 
-  // Create a buffer object
-  var vertexBuffer = gl.createBuffer();
-  if (!vertexBuffer) {
-    console.log('Failed to create the buffer object');
-    return -1;
-  }
-  // Bind the buffer object to target
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  // Write date into the buffer object
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-  //gets the attribute ane checks to see if it's valid
-  var FSIZE = vertices.BYTES_PER_ELEMENT; 
-  var aName = gl.getAttribLocation(gl.program, attribName);
-  if (aName < 0) {
-    console.log('Failed to get the storage location of the attribute being sent to glsl\n');
-    return -1;
-  }
-  //Points the attribute to the pointer
-  gl.vertexAttribPointer(aName, dataCount, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(aName); 
-}*/
-
 function sendAttributeBufferToGLSL(data, dataCount, attribName, stride = 0, offset = 0) {
-  // Create a buffer object
  // console.log("in sendAttributeBufferToGLSL. Printing data...\n");
   //console.log(data); 
-  let buffer = gl.createBuffer();
-  if (!buffer) {
-    console.log('Failed to create the buffer object ')
-    return
-  }
-  // Bind the buffer object to target
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  // Write date into the buffer
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
   let attribute = gl.getAttribLocation(gl.program, attribName);
   if (attribute < 0) {
     console.log('Failed to get the storage location of '+attribName)
     return
   }
-
+  let vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+    console.log('Failed to create the buffer object ')
+    return
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
   let FSIZE = data.BYTES_PER_ELEMENT;
-  // Assign the buffer object to attribute variable
   gl.vertexAttribPointer(attribute, dataCount, gl.FLOAT, false, FSIZE*stride, FSIZE*offset);
   gl.enableVertexAttribArray(attribute);
 }
