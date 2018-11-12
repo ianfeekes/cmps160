@@ -1,29 +1,32 @@
 /**
  * Specifies a tilted cube which rotates.
  *
- * @author "Your Name"
+ * @author "Ian Feekes"
  * @this {TiltedCube}
  */
-class TiltedCube extends Geometry {
-  /**
-   * Constructor for TiltedCube.
-   */
-  constructor(size, centerX, centerY, terrain) {
+class Cube extends Geometry {
+  
+  constructor(size, centerX, centerY, flag) {
     super();
     this.generateCubeVertices(size, centerX, centerY);
     this.vertices.push(cubeVertices);
     this.x.push(centerX);
     this.y.push(centerY);
-    if(terrain) {
-      var rotateInPlace = new Matrix4 ();
-      var translateNegZ = new Matrix4 ();
-      rotateInPlace.setRotate(270, 1, 0, 0);
-      translateNegZ.setTranslate(0, 0, -1.1);
-      this.modelMatrix = rotateInPlace.multiply(this.modelMatrix);
-      this.modelMatrix = translateNegZ.multiply(this.modelMatrix);
-    }
+    if(flag)this.translate(); 
+
     // Recommendations: Might want to tilt your cube at 30 degrees relative to
     // the z-axis here. Pretty good tilt that lets us see that it's a cube.
+  }
+
+  translate()
+  {
+    this.modelMatrix.setTranslate(0, 0, -1.1);
+  }
+
+  render() {
+    gl.enable(gl.DEPTH_TEST);
+    super.render(36, gl.TRIANGLES, 3);
+    gl.disable(gl.DEPTH_TEST);
   }
 
   /**
@@ -65,9 +68,4 @@ class TiltedCube extends Geometry {
    
   }
 
-  render() {
-    gl.enable(gl.DEPTH_TEST);
-    super.render(36, gl.TRIANGLES, 3);
-    gl.disable(gl.DEPTH_TEST);
-  }
 }

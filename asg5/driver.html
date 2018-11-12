@@ -31,14 +31,8 @@
       <script src = "prog/scene/vertex.js"></script>
       <script src = "prog/scene/geometry.js"></script>
 
-      <!-- Include geometric objects -->
-      <script src = "prog/geometries/circle.js"></script>
-      <script src = "prog/geometries/square.js"></script>
-      <script src = "prog/geometries/triangle.js"></script>
-
       <!-- Include animated geometric objects -->
-      <script src = "prog/geometries/animated/tiltedCube.js"></script>
-      <script src = "prog/geometries/animated/texturedCube.js"></script>
+      <script src = "prog/geometries/animated/cube.js"></script>
 
       <!-- OBJ Loading -->
       <script src = "lib/obj_loading/webgl-obj-loader.js"></script>
@@ -53,18 +47,22 @@
     <p> Ian Feekes asg5 <br> 
         W and S allow anterior movement, A and D allow lateral movement <br> 
         Changing perspective done thorugh J and L keys because the mouse <br> 
-        functionality led to sloppy rendering </p> 
+        functionality led to sloppy rendering (and wasn't compulsory in  <br>
+        the rubric) </p> 
 
      <!--Our range slider cannot go as low as 0 for its value--> 
-    Adjust Zoom<br> 
+    [Adjust Zoom ]-----------[Camera Speed]------------[Rot Speed]<br> 
     <!--50 usually gives us the best initial perspective for our zoom slider--> 
     <input type="range" min="1" max="150" value="35" class="slider" id="zoom">
+  <!--  <br>Camera Speed<br> -->
+    <input type="range" min="1" max="100" value="50" class="slider" id="speed"> 
+    <input type="range" min="1" max="100" value="50" class="slider" id="rot"> 
     <br>Near<br> 
-    <input type="range" min="0" max="100" value="50" class="slider" id="near"> 
+    <input type="range" min="1" max="100" value="10" class="slider" id="near"> 
     <br>Far<br>  
-    <input type="range" min="0" max="100" value="50" class="slider" id="far"> 
-    <!--Implement buttons for cycling between orthagonal and perspective proj. --> 
-    <button type="button" id="orthoButton">Orthagonal Projection</button>
+    <input type="range" min="1" max="100" value="100" class="slider" id="far"> 
+    <!--Implement buttons for cycling between orthagraphic and perspective proj. --> 
+    <button type="button" id="orthoButton">Orthographic Projection</button>
     <button type="button" id="perButton">Perspective Projection</button> 
     <!--Display canvas element--> 
     <canvas id="canvas"></canvas>

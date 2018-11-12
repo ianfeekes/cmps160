@@ -10,37 +10,51 @@
  */ 
 
  let zoomSlider;          //Responsible for holding camera zoom value 
+ let speedSlider;         //Responsible for user camera movement speed 
+ let rotSlider;           //Responsible for user camera rotation speed 
+ let nearSlider;          //Near values
+ let farSlider;           //Far values 
+ let orthoButton;         //Button toggler for orthogonal viewing
+ let perButton;           //Button toggler for perspective viewing 
+ let perspective=true;    //Perspective toggler initialization
+ let absX, absY;          //For use in camera position movement 
 
 /*Initiallizes a few sliders, goes through my attempt to procedurally generate the world*/ 
 function initEventHandelers() {
   //Initialize the scene we are working with 
   currScene = new Scene();
-  myGeometry = new Geometry();
-
   zoomSlider = document.getElementById('zoom');
-  //This adds the main world cube 
-    let baseCube = new TiltedCube(1.0,0,0,terrain); 
-    currScene.addGeometry(baseCube);
-
-    //sets the flag to false so we can generate things 
-    terrain=false; 
-
+  speedSlider = document.getElementById('speed'); 
+  rotSlider = document.getElementById('rot'); 
+  nearSlider = document.getElementById('near'); 
+  farSlider = document.getElementById('far'); 
+  orthoButton = document.getElementById('orthoButton');
+  perButton = document.getElementById('perButton'); 
+  //Button on click listeners toggle between perspective being true and false 
+  orthoButton.onclick = function(){perspective = false;};
+  perButton.onclick = function(){perspective=true;};
+  //This adds the main world cube which is set to a sickening purple
+  let mag = [.5,0.0,1.0]; 
+  let baseCube = new Cube(1.0,0,0,true); 
+  baseCube.setColor(mag); 
+  currScene.addGeometry(baseCube);
     /*Loops through x and y coordinates representing where to generate grid cubes*/ 
-    for(var yRange = 0; yRange < 10; yRange++) 
+    for(let i = 0; i < 10; i++) 
     {
-      for(var xRange = 0; xRange < 10; xRange++) 
+      for(let j = 0; j < 10; j++) 
       {
         /*Logic determining where we want to initialize our grid cubes to give the world
           a somewhat maze-like appearence */ 
-        if(worldMap[xRange][yRange]==1)
+        if(map1[j][i]==1)
         {
           /*Create the grid cube and add it to geometry*/ 
-          let gridCube = new TiltedCube(.1, -.9+(xRange*.2), .9-(yRange*.2), terrain); 
+          let gridCube = new Cube(.1, -.9+(j*.2), .9-(i*.2), false); 
+          //gridCube.setColor(mag); 
+         // gridCube.colors=verticesColors; 
           currScene.addGeometry(gridCube); 
         }
       }
     }
-
     //Initializes the key listener functionality for processing which key was pressed 
     document.onkeydown = function(ev) { 
      processKey(ev); 
@@ -51,173 +65,208 @@ function initEventHandelers() {
 
 /*Processes camera movement on key events*/ 
 function processKey(ev) {
-  var absX = Math.abs(G_atX);
-  var absY = Math.abs(G_atY);
+  absX = Math.abs(G_atX);
+  absY = Math.abs(G_atY);
   var rightAngle = (angleRotation - 90);
   var leftAngle = (angleRotation + 90);
   if(Math.sign(rightAngle) == -1) { rightAngle += 360; }
   if(leftAngle >= 360) { leftAngle -= 360; }
-  if(ev.keyCode == 68 || ev.keyCode == 39) goRight(rightAngle, absX, absY); 
-  else if(ev.keyCode == 65 || ev.keyCode == 37)goLeft(leftAngle, absX, absY)
-  else if(ev.keyCode == 87 || ev.keyCode == 38)goForward(absX, absY); 
-  else if(ev.keyCode == 83 || ev.keyCode == 40)goBackward(absX, absY); 
+  if(ev.keyCode == 68 || ev.keyCode == 39) goRight(rightAngle); 
+  else if(ev.keyCode == 65 || ev.keyCode == 37)goLeft(leftAngle)
+  else if(ev.keyCode == 87 || ev.keyCode == 38)goForward(); 
+  else if(ev.keyCode == 83 || ev.keyCode == 40)goBackward(); 
   else if(ev.keyCode == 74)leftRotate(); 
   else if(ev.keyCode == 76)rightRotate();
   else if(ev.keyCode == 73)zoomSlider.value -= 3;
-  else if(ev.keyCode == 75)zoomSlider.value +=3;  
+  //a distusting hack
+  else if(ev.keyCode == 75){zoomSlider.value ++; zoomSlider.value++; zoomSlider.value++;}
 }
 
-function goBackward(absX, absY)
+function goBackward()
 {
-  if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == 1) { //(-)x and (+)y
+  let backVal = speedSlider.value/1000; 
+  if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == 1) {
       if(absX > absY) {
-        g_EyeY -= 0.01 * (absY/absX);
-        g_EyeX += 0.01;
+        g_EyeY -= backVal* (absY/absX);
+        g_EyeX += backVal;
       } else {
-        g_EyeY -= 0.01;
-        g_EyeX += 0.01 * (absX/absY);
+        g_EyeY -= backVal;
+        g_EyeX += backVal * (absX/absY);
       } 
-    } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){                     //if x is positive
+    } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){             
       if(absX > absY) {
-        g_EyeY += 0.01 * (absY/absX);
-        g_EyeX += 0.01;
+        g_EyeY += backVal * (absY/absX);
+        g_EyeX += backVal;
       } else {
-        g_EyeY += 0.01;
-        g_EyeX += 0.01 * (absX/absY);
+        g_EyeY += backVal;
+        g_EyeX += backVal * (absX/absY);
       } 
     } else if (Math.sign(G_atX) == 1 && Math.sign(G_atY) == -1) {
       if(absX > absY) {
-        g_EyeY += 0.01 * (absY/absX);
-        g_EyeX -= 0.01;
+        g_EyeY += backVal * (absY/absX);
+        g_EyeX -= backVal;
       } else {
-        g_EyeY += 0.01;
-        g_EyeX -= 0.01 * (absX/absY);
+        g_EyeY += backVal;
+        g_EyeX -= backVal * (absX/absY);
       } 
     } else {
       if(absX > absY) {
-        g_EyeY -= 0.01 * (absY/absX);
-        g_EyeX -= 0.01;
+        g_EyeY -= backVal * (absY/absX);
+        g_EyeX -= backVal;
       } else {
-        g_EyeY -= 0.01;
-        g_EyeX -= 0.01 * (absX/absY);
+        g_EyeY -= backVal;
+        g_EyeX -= backVal * (absX/absY);
       } 
     }
 }
 
-function goForward(absX, absY)
+function goForward()
 {
-  if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == 1) { //(-)x and (+)y
+  let forVal = speedSlider.value/1000; 
+  if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == 1) { 
       if(absX > absY) {
-        g_EyeY += 0.01 * (absY/absX);
-        g_EyeX -= 0.01;
+        g_EyeY += forVal * (absY/absX);
+        g_EyeX -= forVal;
       } else {
-        g_EyeY += 0.01;
-        g_EyeX -= 0.01 * (absX/absY);
+        g_EyeY += forVal;
+        g_EyeX -= forVal * (absX/absY);
       } 
-    } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){                     //if x is positive
+    } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){                
       if(absX > absY) {
-        g_EyeY -= 0.01 * (absY/absX);
-        g_EyeX -= 0.01;
+        g_EyeY -= forVal * (absY/absX);
+        g_EyeX -= forVal;
       } else {
-        g_EyeY -= 0.01;
-        g_EyeX -= 0.01 * (absX/absY);
+        g_EyeY -= forVal;
+        g_EyeX -= forVal * (absX/absY);
       } 
     } else if (Math.sign(G_atX) == 1 && Math.sign(G_atY) == -1) {
       if(absX > absY) {
-        g_EyeY -= 0.01 * (absY/absX);
-        g_EyeX += 0.01;
+        g_EyeY -= forVal * (absY/absX);
+        g_EyeX += forVal;
       } else {
-        g_EyeY -= 0.01;
-        g_EyeX += 0.01 * (absX/absY);
+        g_EyeY -= forVal;
+        g_EyeX += forVal * (absX/absY);
       } 
     } else {
       if(absX > absY) {
-        g_EyeY += 0.01 * (absY/absX);
-        g_EyeX += 0.01;
+        g_EyeY += forVal * (absY/absX);
+        g_EyeX += forVal;
       } else {
-        g_EyeY += 0.01;
-        g_EyeX += 0.01 * (absX/absY);
+        g_EyeY += forVal;
+        g_EyeX += forVal * (absX/absY);
       } 
     } 
 }
 
-function goRight(rightAngle, absX, absY)
+function goRight(leftAngle)
 {
-    if(rightAngle < 90 && rightAngle >= 0) { //(-)x and (+)y
-      if(rightAngle < 90 && rightAngle >= 45) {
-        g_EyeY += 0.01;
-        g_EyeX += 0.01 * (absY/absX); 
-      } else {
-        g_EyeY += 0.01 * (absX/absY);
-        g_EyeX += 0.01;
-      } 
-    } else if(rightAngle < 180 && rightAngle >= 90) { 
-      if(rightAngle < 135 && rightAngle >= 90) {
-        g_EyeY += 0.01;
-        g_EyeX -= 0.01 * (absY/absX);
-      } else {
-        g_EyeY += 0.01 * (absX/absY);
-        g_EyeX -= 0.01;
-      } 
-    } else if (rightAngle < 270 && rightAngle >= 180) {
-      if(rightAngle < 270 && rightAngle >= 225) {
-        g_EyeY -= 0.01;
-        g_EyeX -= 0.01 * (absY/absX);
-      } else {
-        g_EyeY -= 0.01 * (absX/absY);
-        g_EyeX -= 0.01;
-      } 
-    } else {
-      if(rightAngle < 315 && rightAngle >= 270) {
-        g_EyeY -= 0.01;
-        g_EyeX += 0.01 * (absY/absX);
-      } else {
-        g_EyeY -= 0.01 * (absX/absY);
-        g_EyeX += 0.01;
-      } 
-    }
+  let lVal = speedSlider.value/1000; 
+  if(leftAngle <45)
+  {
+    g_EyeY+=lVal*(absX/absY); 
+    g_EyeX += lVal;
+  }
+  else if(leftAngle<90)
+  {
+    g_EyeY += lVal;
+    g_EyeX += lVal * (absY/absX);
+  }
+  else if(leftAngle<135)
+  {
+    g_EyeY += lVal;
+    g_EyeX -= lVal * (absY/absX);
+  }
+  else if(leftAngle<180)
+  {
+    g_EyeY += lVal * (absX/absY);
+    g_EyeX -= lVal;
+  }
+  else if(leftAngle<225)
+  {
+    g_EyeY -= lVal * (absX/absY);
+    g_EyeX -= lVal;
+  }
+  else if(leftAngle<270)
+  {
+    g_EyeY -= lVal * (absX/absY);
+    g_EyeX -= lVal;
+  }
+  else if(leftAngle<315)
+  {
+    g_EyeY -= lVal;
+    g_EyeX += lVal * (absY/absX);
+  }
+  else 
+  {
+    g_EyeY -= lVal * (absX/absY);
+    g_EyeX += lVal;
+  } 
 }
 
-function goLeft(leftAngle, absX, absY)
+/*Processes the angle for how to increment the camera*/ 
+function goLeft(leftAngle)
 {
-  if(leftAngle < 90 && leftAngle >= 0) { //(-)x and (+)y
-      if(leftAngle < 90 && leftAngle >= 45) {
-        g_EyeY += 0.01;
-        g_EyeX += 0.01 * (absY/absX);
-      } else {
-        g_EyeY += 0.01 * (absX/absY);
-        g_EyeX += 0.01;
-      } 
-    } else if(leftAngle < 180 && leftAngle >= 90){                 
-      if(leftAngle < 135 && leftAngle >= 90) {
-        g_EyeY += 0.01;
-        g_EyeX -= 0.01 * (absY/absX);
-      } else {
-        g_EyeY += 0.01 * (absX/absY);
-        g_EyeX -= 0.01;
-      } 
-    } else if (leftAngle < 270 && leftAngle >= 180) {
-      if(leftAngle < 270 && leftAngle >= 225) {
-        g_EyeY -= 0.01;
-        g_EyeX -= 0.01 * (absY/absX);
-      } else {
-        g_EyeY -= 0.01 * (absX/absY);
-        g_EyeX -= 0.01;
-      } 
-    } else {
-      if(leftAngle < 315 && leftAngle >= 270) {
-        g_EyeY -= 0.01;
-        g_EyeX += 0.01 * (absY/absX);
-      } else {
-        g_EyeY -= 0.01 * (absX/absY);
-        g_EyeX += 0.01;
-      } 
-    }
+  //console.log(leftAngle); 
+  /* let lVal = speedSlider.value/1000; 
+  if(Math.sin(leftAngle)>0)
+  {
+    g_EyeY+=lVal*(absX/absY);
+  }
+  else g_EyeY-=lVal*(absX/absY); 
+  if(Math.cos(leftAngle)>0)
+  {
+    g_EyeX+=lVal*(absX/absY);
+  }
+  else g_EyeX-=lVal*(absX/absY); */ 
+
+  let lVal = speedSlider.value/1000; 
+  if(leftAngle <45)
+  {
+    g_EyeY+=lVal*(absX/absY); 
+    g_EyeX += lVal;
+  }
+  else if(leftAngle<90)
+  {
+    g_EyeY += lVal;
+    g_EyeX += lVal * (absY/absX);
+  }
+  else if(leftAngle<135)
+  {
+    g_EyeY += lVal;
+    g_EyeX -= lVal * (absY/absX);
+  }
+  else if(leftAngle<180)
+  {
+    g_EyeY += lVal * (absX/absY);
+    g_EyeX -= lVal;
+  }
+  else if(leftAngle<225)
+  {
+    g_EyeY -= lVal * (absX/absY);
+    g_EyeX -= lVal;
+  }
+  else if(leftAngle<270)
+  {
+    g_EyeY -= lVal * (absX/absY);
+    g_EyeX -= lVal;
+  }
+  else if(leftAngle<315)
+  {
+    g_EyeY -= lVal;
+    g_EyeX += lVal * (absY/absX);
+  }
+  else 
+  {
+    g_EyeY -= lVal * (absX/absY);
+    g_EyeX += lVal;
+  } 
 }
 
 function leftRotate()
 { 
-    angleRotation += 2;
+    let rotIncr = rotSlider.value/10; 
+   // console.log(rotIncr);
+    angleRotation += rotIncr;
     angleRotation%=360;
     G_atX = 100 * Math.cos(angleRotation*(Math.PI/180));
     G_atY = 100 * Math.sin(angleRotation*(Math.PI/180));
@@ -225,7 +274,9 @@ function leftRotate()
 
 function rightRotate()
  {
-    angleRotation -= 2;
+    let rotIncr = rotSlider.value/10; 
+    //console.log(rotIncr); 
+    angleRotation -= rotIncr;
     angleRotation %=360;
     G_atX = 100 * Math.cos(angleRotation*(Math.PI/180));
     G_atY = 100 * Math.sin(angleRotation*(Math.PI/180));

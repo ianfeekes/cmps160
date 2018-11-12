@@ -1,7 +1,7 @@
 /**
  * Specifies a WebGL scene.
  *
- * @author "Your Name Here"
+ * @author "Ian Feekes"
  * @this {Scene}
  */
 class Scene {
@@ -11,16 +11,15 @@ class Scene {
    * @constructor
    */
   constructor() {
-    this.geometries = []; // Geometries being drawn on canvas
-    this.worldObjects = [];
+    this.geometries = []; 
   }
 
   /**
    * Adds the given geometry to the the scene.
    */
-  addWorldObject(worldObject) {
+  /*addWorldObject(worldObject) {
     this.worldObjects.push(worldObject);
-  }
+  }*/
 
   addGeometry(geometry) {
     this.geometries.push(geometry);
@@ -33,25 +32,23 @@ class Scene {
     while (this.geometries.length > 0) {
       this.geometries.pop();
     }
+    this.geometries=[]; 
   }
 
   //Rendering the objects will in turn also update the animations.
   //Updating is done individually through their own classes 
   updateAnimation() {
-    myGeometry.updateAnimation();
+    //myGeometry.updateAnimation();
+    for(let i = 0; i < this.geometries.length; i++) {
+      this.geometries[i].updateAnimation();
   }
-  
-  renderWorldObjects() {
-    //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    for(var k = 0; k < this.worldObjects.length; k++) {
-      this.worldObjects[k].render();
+ }
+
+  render() {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    for(let i = 0; i < this.geometries.length; i++) {
+      this.geometries[i].render();
     }
   }
 
-  renderGeometry() {
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    for(var k = 0; k < this.geometries.length; k++) {
-      this.geometries[k].render();
-    }
-  }
 }

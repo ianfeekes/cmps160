@@ -10,15 +10,32 @@
  */ 
 
 function tick() {
-  for(let i=0;i<currScene.geometries.length;i++)
-  {
-    currScene.geometries[i].updateAnimation(); 
-  }
+  //Updates animation of all geometry before rendering 
+  currScene.updateAnimation(); 
   viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ, G_atX, G_atY, 0, 0, 0, 1);
-  projMatrix.setPerspective(zoomSlider.value, canvas.width/canvas.height, 0.1, 100);
+  //Checks to see if we need to be dealing with orthagonal or perspective view 
+  if(perspective){
+    //console.log('yes'); 
+    //projMatrix.setPerspective(zoomSlider.value, canvas.width/canvas.height, 0.1, 100);
+    //console.log(nearSlider.value/50);
+  //console.log(farSlider.value)
+
+  /*For some reason casting the value of the far slider to a "number" works*/ 
+    projMatrix.setPerspective(zoomSlider.value, canvas.width/canvas.height, nearSlider.value/50, Number(farSlider.value/10));
+  }
+  else{
+    //console.log("no persp"); 
+    projMatrix.setOrtho(-1, 1, -1, 1, nearSlider.value/50, Number(farSlider.value/10));
+  }
+
+  /*console.log(nearSlider.value/100);
+  console.log(farSlider.value); 
+
+  projMatrix.setPerspective(zoomSlider.value, canvas.width/canvas.height, 0.1, 100);*/ 
+  
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
   gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
-  currScene.renderGeometry();
+  currScene.render();
   requestAnimationFrame(tick, canvas);
 }
 

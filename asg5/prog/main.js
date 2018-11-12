@@ -6,52 +6,56 @@
  *main.js
  */ 
 
-var ev;
-var output, interSlider;
-var u_FragColor, a_PointSize, u_ModelMatrix, u_ViewMatrix, u_ProjMatrix;
-var mouseDown = 0, mouseUp = true, x, y, xy, size, rgb, vertexBuffer, rgba;
-var triangleVertices, squareVertices, numberOfSegments, circleVertices;
-var squareButton = true, triangleButton = false, circleButton = false; 
-var tiltedCubeButton = false;
-var  myGeometry, mySquare, myTriange, myCircle;
-
+let u_FragColor
+let a_PointSize
+let u_ModelMatrix
+let u_ViewMatrix
+let u_ProjMatrix;
 let currScene;          
 let canvas; 
 let gl; 
 let a_Position; 
-
-var ANGLE_STEP = 60.0, currentAngle = 0.0, currentSize = 1.0;
-var g_last = Date.now();
-var upward = true;
-var radian, cosB, sinB;
-var vertexData;
-var a_Color;
-var vertexTexCoordBuffer;
-var textureButton = true;
-var a_TexCoord;
-var verticesColors;
-var indices;
-var indice;
-var vertexColorBuffer;
-var reader;
-var image;
-var cubeVertices;
-var worldMap, gameOverMap, color, start = false;
-var once = true;
-var goingLeft = true;
-var g_EyeX = 0, g_EyeY = -1, g_EyeZ = 0;
-var fileReader, fileOBJ, objString, loadedOBJ, terrain = true;
-var viewMatrix = new Matrix4(); 
-var projMatrix = new Matrix4();  
-var xStart, xDelta, angleRotation = 90;
-var G_atX = 0, G_atY = 100, angleRotationRads = 0;
+let a_Color;
+let a_TexCoord;
+let cubeVertices;
+let map1;
+let g_EyeX; 
+let g_EyeY;
+let g_EyeZ;
+let viewMatrix; 
+let projMatrix;
+let xStart;
+let xDelta;
+let angleRotation; 
+let G_atX; 
+let G_atY; 
 var leftRotation;
 
-/**
- * Function called when the webpage loads.
- */ 
-
+/*Initializes a few important variables and glsl values before simply calling 
+  initializeEventHandlers()
+  */ 
 function main() {
+  //Set up a few important perspective variables
+  viewMatrix = new Matrix4(); 
+  projMatrix = new Matrix4(); 
+  angleRotation=90; 
+  G_atX=0;
+  G_atY=100; 
+  g_EyeX=0;
+  g_EyeY=-1;
+  g_EyeZ=0; 
+  map1 = [
+  [1,1,0,1,1,1,1,1,1,0],
+  [1,0,0,1,1,1,1,1,0,0],
+  [1,0,1,1,1,1,1,0,0,1],
+  [1,0,1,1,1,0,0,0,1,1],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0], 
+  [1,0,1,1,1,0,0,0,1,1],
+  [1,0,1,1,1,1,1,1,1,1],
+  [0,0,0,0,1,0,0,0,1,1],
+  [1,1,1,0,1,1,1,0,1,1]
+]
   //Initialize the canvas element and checks to make sure it exists 
   canvas = document.getElementById('canvas');
   if(!canvas){
@@ -69,12 +73,9 @@ function main() {
     console.log("Error: could not retrieve the gl operations\n");
     return -1; 
   } 
-
-  initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)
-
+  initShaders(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER);
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
-
   //Gets the location of the fragments and shader variables.
   a_Position = gl.getAttribLocation(gl.program, 'a_Position');
   if(a_Position<0)
@@ -136,20 +137,7 @@ function main() {
     console.log("Error: could not retrieve a_TexCoord value\n");
     return -1; 
   }
-  
-
-  //Start with rainbow colors
-  //gl.uniform1f(u_FSwitch, 0.5); 
   gl.uniform1f(u_FSwitch, 1.0);
-  //gl.uniform1f(u_VSwitch, 1.0);
-
-
-  vertexColorBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, verticesColors, gl.STATIC_DRAW);
-  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(a_Color); 
-  
   //Call initialize event handlers
   initEventHandelers();
 }
