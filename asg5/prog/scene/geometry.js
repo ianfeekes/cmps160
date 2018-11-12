@@ -1,7 +1,15 @@
+/*Ian Feekes
+ *#1474914
+ *ifeekes@ucsc.edu
+ *
+ *geometry
+ */ 
+
+
 /**
  * Specifies a geometric object.
  *
- * @author "Your Name Here"
+ * @author "Ian Feekes"
  * @this {Geometry}
  */
 class Geometry {
@@ -11,54 +19,25 @@ class Geometry {
    * @constructor
    */
   constructor() {
-    this.spin = 0;
     this.vertices = []; // Vertex objects. Each vertex has x-y-z.
-    this.color = [1,1,1,1];  // Default
     this.modelMatrix = new Matrix4(); // Model matrix applied to geometric object
+    this.x = [];
+    this.y = [];
     this.shader = null; // shading program you will be using to shade this geometry
-    this.texture = null
-
-    //We create data
-    this.data = []
-    this.uv_data = []
-    this.color_data = []
-  }
-
-
-  flatData() {
-    //We push all points array to data
-    for (var i = 0; i < this.vertices.length; i++) {
-      //This is required for loaded objects. We take the elements of the Vector4
-      //Notice we use slice.call to reduce the array back to normal array instead of Float32
-      this.data.push(Array.prototype.slice.call(this.vertices[i].points.elements))
-      this.uv_data.push(Array.prototype.slice.call(this.vertices[i].uv))
-      this.color_data.push(Array.prototype.slice.call(this.vertices[i].color))
-    }
-    //We flatten data so we can use it as a 1d array
-    this.data = new Float32Array(this.data.flat())
-    this.uv_data = new Float32Array(this.uv_data.flat())
-    this.color_data = new Float32Array(this.color_data.flat())
-
-  }
-
-  render() {
-    send2DTextureToGLSL(this.texture, 0, 'u_Sampler')
-    sendAttributeBufferToGLSL(this.uv_data, 2, 'a_TexCoord', 2, 0); //Sending the texture uv coordinates
-    sendAttributeBufferToGLSL(this.data, 3, 'a_Position') //Sending the vertices
-    sendUniformMatToGLSL(this.modelMatrix.elements, "u_modelMatrix")
-    if(this instanceof Cube) {
-      sendIndicesBufferToGLSL(this.indices)
-      tellGLSLToDrawCurrentBuffer(36, ModesEnum.elements)
-    } else {
-      tellGLSLToDrawCurrentBuffer(this.vertices.length)
-    }
+    this.textures = [];
   }
 
   /**
-   * Responsible for updating the geometry's modelMatrix for animation.
-   * Does nothing for non-animating geometry.
+   * Renders this Geometry within your webGL scene.
    */
+  render(numberOfVertices, renderMethod, space) {
+    sendUniformMatToGLSL(this.modelMatrix.elements, u_ModelMatrix);  
+    sendAttributeBufferToGLSL(this.vertices[0], space, a_Position);
+    tellGLSLToDrawCurrentBuffer(renderMethod, numberOfVertices);
+  }
   updateAnimation() {
     return;
   }
 }
+
+

@@ -7,10 +7,10 @@
 class Vertex {
   constructor() {
     // For ASG2
-    this.points = new Vector4();
+    this.points = [];
+
     // For later assignments
-    this.color = [];
     this.uv = [];
-    this.normal = new Vector3();
+    this.normal = [];
   }
 }

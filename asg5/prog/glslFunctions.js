@@ -1,3 +1,14 @@
+/*Ian Feekes
+ *ifeekes@ucsc.edu
+ *#1474914
+ *cmps160 asg5
+ *glsl functions
+ *
+ *Contains all functions for interactions between object-oriented javascript
+ *and glsl for canvas usage*/
+
+
+
 /**
  * Sends a WebGL 2D texture object (created by load2DTexture) and sends it to
  * the shaders.
@@ -8,46 +19,21 @@
  * textureUnit location (0 - 7) will reside
  */
 function send2DTextureToGLSL(val, textureUnit, uniformName) {
-  //    1. Gather your uniform location
-  var uniformVar = gl.getUniformLocation(gl.program, uniformName);
-  //    2. Determine the texture unit you will be using (gl.TEXTURE"N")
-  let unit
-  switch (textureUnit) {
-    case 0:
-      unit = gl.TEXTURE0
-      break;
-    case 1:
-      unit = gl.TEXTURE1
-      break;
-    case 2:
-      unit = gl.TEXTURE2
-      break;
-    case 3:
-      unit = gl.TEXTURE3
-      break;
-    case 4:
-      unit = gl.TEXTURE4
-      break;
-    case 5:
-      unit = gl.TEXTURE5
-      break;
-    case 6:
-      unit = gl.TEXTURE6
-      break;
-    case 7:
-      unit = gl.TEXTURE7
-      break;
-    default:
-      return
+  var uName = gl.getUniformLocation(gl.program, uniformName);
+  if(uName<0){
+    console.log('Failed to get the storage location of the attribute being sent to glsl\n');
+    return -1;
   }
-  //    3. Activate your texture unit using gl.activeTexture
-  gl.activeTexture(unit);
-  //    4. Bind your texture using gl.bindTexture
+  if(textureUnit==0) gl.activeTexture(gl.TEXTURE0);
+  else if(textureUnit==1) gl.activeTexture(gl.TEXTURE1);
+  else if(textureUnit==2) gl.activeTexture(gl.TEXTURE2); 
+  else if(textureUnit==3) gl.activeTexture(gl.TEXTURE3); 
+  else if(textureUnit==4) gl.activeTexture(gl.TEXTURE4); 
+  else if(textureUnit==5) gl.activeTexture(gl.TEXTURE5); 
+  else if(textureUnit==6) gl.activeTexture(gl.TEXTURE6);
+  else if(textureUnit==7) gl.activeTexture(gl.TEXTURE7); 
   gl.bindTexture(gl.TEXTURE_2D, val);
-  //    5. Send the texture unit (textureUnit not the one you found) to your
-  //       uniform location.
-  gl.uniform1i(uniformVar, textureUnit);
-
+  gl.uniform1i(uName, textureUnit);
 }
 
 /**
@@ -66,29 +52,22 @@ function send2DTextureToGLSL(val, textureUnit, uniformName) {
  * object passed as a parameter.
  */
 function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, callback) {
-  let image = new Image();
+  var image = new Image();
+  image.onlaod = function () {
+  var texture = gl.createTexture();   // Create a texture object
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
 
-  image.onload = function() {
-    //  1. create a texture object by saving the result of gl.createTexture()
-    var texture = gl.createTexture();
-    //  2. Flip your image's y-axis and bind your texture object to gl.TEXTURE_2D
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    //  3. Using multiple calls to gl.texParameteri, pass magParam, minParam,
-    //     wrapSParam, and wrapTParam.
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magParam);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minParam);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapSParam);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapTParam);
-    //  4. Set the texture's image to the loaded image using gl.texImage2D
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-    //  5. Pass your completed texture object to your callback function
-    callback(texture)
+  callback(texture);
   }
-
-  image.src = imgPath
-
+  image.src = imgPath;
 }
+
 /**
  * Sends data to a uniform variable expecting a matrix value.
  *
@@ -97,63 +76,21 @@ function create2DTexture(imgPath, magParam, minParam, wrapSParam, wrapTParam, ca
  * @param {String} uniformName Name of the uniform variable recieving data
  */
  function sendUniformMatToGLSL(val, uniformName) {
-   let u_var = gl.getUniformLocation(gl.program, uniformName);
-   if (!u_var) {
-     console.log('Failed to get '+uniformName+' variable');
-     return;
-   }
-   //We have to handle each case now differently
-   switch (val.length) {
-     case 16:
-       gl.uniformMatrix4fv(u_var, false, val);
-       break;
-     case 9:
-       gl.uniformMatrix3fv(u_var, false, val);
-       break;
-     case 4:
-       gl.uniformMatrix2fv(u_var, false, val);
-       break;
-     default:
-       console.log('Wrong array size')
-       return
-   }
-   // Recomendations: This is going to be very similar to sending a float/vec.
+  gl.uniformMatrix4fv(uniformName, false, val);
 }
 
 /**
  * Sends data to an attribute variable using a buffer.
- *
- * @private
- * @param {Float32Array} data Data being sent to attribute variable
- * @param {Number} dataCount The amount of data to pass per vertex
- * @param {String} attribName The name of the attribute variable
- * @param {Number} stride The amount of data to pass per vertex
- * @param {Number} offset The amount of data to pass per vertex
  */
-function sendAttributeBufferToGLSL(data, dataCount, attribName, stride = 0, offset = 0) {
-  // Create a buffer object
-  let buffer = gl.createBuffer();
-  if (!buffer) {
-    console.log('Failed to create the buffer object ')
-    return
-  }
-  // Bind the buffer object to target
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  // Write date into the buffer
+function sendAttributeBufferToGLSL(data, dataCount, attribName) {
+  vertexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
-  let attribute = gl.getAttribLocation(gl.program, attribName);
-  if (attribute < 0) {
-    console.log('Failed to get the storage location of '+attribName)
-    return
-  }
-
-  let FSIZE = data.BYTES_PER_ELEMENT;
-  // Assign the buffer object to attribute variable
-  gl.vertexAttribPointer(attribute, dataCount, gl.FLOAT, false, FSIZE*stride, FSIZE*offset);
-  gl.enableVertexAttribArray(attribute);
+  gl.vertexAttribPointer(attribName, dataCount, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(attribName);
 }
 
+//Added helper function for cube objects 
 function sendIndicesBufferToGLSL(indices) {
   const indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -164,67 +101,25 @@ function sendIndicesBufferToGLSL(indices) {
  * Draws the current buffer loaded. Buffer was loaded by sendAttributeBufferToGLSL.
  *
  * @param {Integer} pointCount The amount of vertices being drawn from the buffer.
- * @param {Integer} pointCount Mode to draw. --> this is insane not to use fan for circles or later elements for cubes
-
  */
-function tellGLSLToDrawCurrentBuffer(pointCount, mode) {
-  //we use here triangle_fan to make circles the easy way!
-  switch (mode) {
-    case ModesEnum.fan:
-      gl.drawArrays(gl.TRIANGLE_FAN, 0, pointCount)
-      break;
-    case ModesEnum.elements:
-      gl.drawElements(gl.TRIANGLES, pointCount, gl.UNSIGNED_SHORT, 0);
-      break;
-    default:
-      gl.drawArrays(gl.TRIANGLES, 0, pointCount)
-  }
+function tellGLSLToDrawCurrentBuffer(renderMethod, pointCount) {
+  gl.drawArrays(renderMethod, 0, pointCount);
 }
 
 /**
  * Sends a float value to the specified uniform variable within GLSL shaders.
  * Prints an error message if unsuccessful.
- *
- * @param {float} val The float value being passed to uniform variable
- * @param {String} uniformName The name of the uniform variable
  */
 function sendUniformFloatToGLSL(val, uniformName) {
-  let u_var = gl.getUniformLocation(gl.program, uniformName);
-  if (!u_var) {
-    console.log('Failed to get '+uniformName+' variable');
-    return;
-  }
-  //Just one float, easy
-  gl.uniform1f(u_var, val);
+  gl.uniform1f(uniformName, val);
 }
 
 /**
  * Sends an JavaSript array (vector) to the specified uniform variable within
  * GLSL shaders. Array can be of length 2-4.
- *
- * @param {Array} val Array (vector) being passed to uniform variable
- * @param {String} uniformName The name of the uniform variable
  */
 function sendUniformVec4ToGLSL(val, uniformName) {
-  // Get the storage location of uniform variable
-  let u_var = gl.getUniformLocation(gl.program, uniformName);
-  if (!u_var) {
-    console.log('Failed to get '+uniformName+' variable');
-    return;
-  }
-  //We have to handle each case now differently
-  switch (val.length) {
-    case 2:
-      gl.uniform2fv(u_var, val);
-      break;
-    case 3:
-      gl.uniform3fv(u_var, val);
-      break;
-    case 4:
-      gl.uniform4fv(u_var, val);
-      break;
-    default:
-      console.log('Wrong array size')
-      return
-  }
+  gl.uniform4f(uniformName, val[0], val[1], val[2], val[3]);
 }
+
+
