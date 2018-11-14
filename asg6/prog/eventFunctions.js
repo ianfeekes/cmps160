@@ -18,6 +18,7 @@
  let perButton;           //Button toggler for perspective viewing 
  let perspective=true;    //Perspective toggler initialization
  let absX, absY;          //For use in camera position movement 
+ let normS=true;   //Boolean flag telling us whether or not to use the normal shader in tick/render
 
 /*Initiallizes a few sliders, goes through my attempt to procedurally generate the world*/ 
 function initEventHandelers() {
@@ -80,6 +81,15 @@ function processKey(ev) {
   else if(ev.keyCode == 73)zoomSlider.value -= 3;
   //a distusting hack
   else if(ev.keyCode == 75){zoomSlider.value ++; zoomSlider.value++; zoomSlider.value++;}
+  else if(ev.keyCode == 78)normalShader(); 
+}
+
+/*This is called whenever N is pressed to reset the value of N to true so that the user 
+ *can see the differences in lighting*/ 
+function normalShader()
+{
+  console.log("n pressed \n"); 
+  let normS=true; 
 }
 
 function goBackward()

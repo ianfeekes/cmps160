@@ -30,6 +30,7 @@ class Geometry {
     this.colors=[]; 
     this.data = [];
     this.uvVals = []; 
+    this.normals = []; 
     this.color_data = []; 
     for(let i=0;i<200;i++)this.colors.push(Math.random()); 
     this.colors = new Float32Array(this.colors); 
@@ -55,12 +56,16 @@ class Geometry {
     let vColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vColorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
+    
+
     gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(a_Color);
- 
+    /*Send the normal. I'm pretty over send attribute buffer to glsl bugs
+      so this is going to be done to a copied function from the textbok */ 
+   // if(!initArrayBuffer(gl, 'a_Normal', this.normals, 3, gl.FLOAT))return-1; 
 
     sendUniformMatToGLSL(this.modelMatrix.elements, u_ModelMatrix);  
-    sendAttributeBufferToGLSL(this.vertices[0], space, a_Position);
+    sendAttributeBufferToGLSL(this.vertices, space, a_Position);
     tellGLSLToDrawCurrentBuffer(renderMethod, numberOfVertices);
   }
 

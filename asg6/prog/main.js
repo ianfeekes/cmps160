@@ -11,6 +11,7 @@ let a_PointSize
 let u_ModelMatrix
 let u_ViewMatrix
 let u_ProjMatrix;
+let a_Normal; 
 let currScene;          
 let canvas; 
 let gl; 
@@ -29,7 +30,14 @@ let xDelta;
 let angleRotation; 
 let G_atX; 
 let G_atY; 
+let u_LightColor        //added for lighting
+let u_LightPosition     //added for lighting 
+let u_AmbientLight      //added for lighting 
+let u_NormalMatrix      //added for lighting 
 var leftRotation;
+
+let regularShaders; 
+let lightingShaders; 
 
 /*Initializes a few important variables and glsl values before simply calling 
   initializeEventHandlers()
@@ -73,7 +81,24 @@ function main() {
     console.log("Error: could not retrieve the gl operations\n");
     return -1; 
   } 
-  initShaders(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER);
+
+regularShaders=createShader(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER); 
+
+  //Initialize the new lighting shaders for the program 
+  if (!initShaders(gl, VSHADER_SOURCE, ASSIGN5_FSHADER)) {
+    console.log('Failed to intialize lighting shaders.');
+    return;
+  }
+
+  /*if(!initShaders(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER)){
+    console.log('Failed to initialize normal shaders');
+    return; 
+  }*/ 
+
+  //Create the two shaders we will be switching between for this assignment
+ // lightingShaders=createShader(gl, VSHADER_SOURCE, ASSIGN5_FSHADER); 
+  
+
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   //Gets the location of the fragments and shader variables.
@@ -81,6 +106,12 @@ function main() {
   if(a_Position<0)
   {
     console.log("Error: could not retrieve a_Position value\n");
+    return -1; 
+  }
+  a_Normal= gl.getAttribLocation(gl.program, 'a_Normal'); 
+  if(a_Normal<0)
+  {
+    console.log("Error: could not retreeive a_Normal value\n");
     return -1; 
   }
   a_PointSize = gl.getUniformLocation(gl.program, 'a_PointSize');
@@ -131,12 +162,23 @@ function main() {
     console.log("Error: could not retrieve u_VSwitch value\n");
     return -1; 
   }
-  a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
+  //lighting global variables 
+  u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
+  u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition'); 
+  u_AmbientLight = gl.getUniformLocation(gl.program, 'u_AmbientLight'); 
+  u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix'); 
+ /* a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
   if(a_TexCoord<0)
   {
     console.log("Error: could not retrieve a_TexCoord value\n");
     return -1; 
-  }
+  } */ 
+  gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
+  // Set the light direction (in the world coordinate)
+  gl.uniform3f(u_LightPosition, 2.3, 4.0, 3.5);
+  // Set the ambient light
+  gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
+  
   gl.uniform1f(u_FSwitch, 1.0);
   //Call initialize event handlers
   initEventHandelers();
