@@ -23,8 +23,9 @@ let map1;
 let g_EyeX; 
 let g_EyeY;
 let g_EyeZ;
-let viewMatrix; 
-let projMatrix;
+let viewMatrix;        //variable holding our current global view matrix
+let projMatrix;        //variable holding our projection matrix
+let normalMatrix;      //variable holding current global normal matrix
 let xStart;
 let xDelta;
 let angleRotation; 
@@ -46,6 +47,7 @@ function main() {
   //Set up a few important perspective variables
   viewMatrix = new Matrix4(); 
   projMatrix = new Matrix4(); 
+  normalMatrix = new Matrix4();   //transformation matrix for normals 
   angleRotation=90; 
   G_atX=0;
   G_atY=100; 
@@ -175,10 +177,10 @@ regularShaders=createShader(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER);
   } */ 
   gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
   // Set the light direction (in the world coordinate)
-  gl.uniform3f(u_LightPosition, 2.3, 4.0, 3.5);
+  gl.uniform3f(u_LightPosition, 2.3, 4.0, 8);
   // Set the ambient light
   gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
-  
+
   gl.uniform1f(u_FSwitch, 1.0);
   //Call initialize event handlers
   initEventHandelers();

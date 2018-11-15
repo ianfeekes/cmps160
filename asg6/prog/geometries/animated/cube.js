@@ -25,19 +25,40 @@ class Cube extends Geometry {
 
   render() {
     gl.enable(gl.DEPTH_TEST);
-
-/*  var indexBuffer = gl.createBuffer();
+  /*var indexBuffer = gl.createBuffer();
   if (!indexBuffer) {
     console.log('Failed to create the buffer object');
     return false;
   }
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW); */ 
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);  */ 
+    //super.render(36, gl.TRIANGLES, 3);
+    let vColorBuffer = gl.createBuffer(); 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vColorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_Color);
+
+    let normBuffer = gl.createBuffer(); 
+    gl.bindBuffer(gl.ARRAY_BUFFER, normBuffer); 
+    gl.bufferData(gl.ARRAY_BUFFER, this.normals, gl.STATIC_DRAW); 
+    gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0,0); 
+    gl.enableVertexAttribArray(a_Normal); 
+
+    sendUniformMatToGLSL(this.modelMatrix.elements, u_ModelMatrix);  
+    sendAttributeBufferToGLSL(this.vertices, 3, a_Position);
+
+    //added messing around with normal matrix variable 
+    normalMatrix.setInverseOf(this.modelMatrix); 
+    normalMatrix.transpose(); 
+    gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements); 
 
 
-    super.render(36, gl.TRIANGLES, 3);
-   //super.render(this.indices.length, gl.TRIANGLES, 3); 
+    tellGLSLToDrawCurrentBuffer(gl.TRIANGLES, 36);
+  // super.render(this.indices.length, gl.TRIANGLES, 3); 
     gl.disable(gl.DEPTH_TEST);
+
+
   } 
 
   /**
@@ -65,15 +86,15 @@ class Cube extends Geometry {
 
       centerX-size, centerY-size,  size,       centerX-size, centerY-size, -size,    centerX+size, centerY-size, -size,       //t10
       centerX-size, centerY-size,  size,       centerX+size, centerY-size, -size,    centerX+size, centerY-size,  size        //t11
-    ]); 
+    ]);  
 
-   /* cubeVertices = new Float32Array([
-    this.centerX+2.0, this.centerY+2.0, 2.0,  this.centerX-2.0, this.centerY+2.0, 2.0,  this.centerX-2.0, this.centerY-2.0, 2.0,   this.centerX+2.0, this.centerY-2.0, 2.0, // v0-v1-v2-v3 front
-     this.centerX+2.0, this.centerY+2.0, 2.0,  this.centerX+2.0, this.centerY-2.0, 2.0,  this.centerX+2.0, this.centerY-2.0,-2.0,   this.centerX+2.0, this.centerY+2.0,-2.0, // v0-v3-v4-v5 right
-     this.centerX+2.0, this.centerY+2.0, 2.0,  this.centerX+2.0, this.centerY+2.0,-2.0,  this.centerX-2.0, this.centerY+2.0,-2.0,  this.centerX-2.0, this.centerY+2.0, 2.0, // v0-v5-v6-v1 up
-     this.centerX-2.0, this.centerY+2.0, 2.0,  this.centerX-2.0, this.centerY+2.0,-2.0,  this.centerX-2.0, this.centerY-2.0,-2.0,  this.centerX-2.0, this.centerY-2.0, 2.0, // v1-v6-v7-v2 left
-     this.centerX-2.0, this.centerY-2.0,-2.0,  this.centerX+2.0, this.centerY-2.0,-2.0,  this.centerX+2.0, this.centerY-2.0, 2.0,  this.centerX-2.0, this.centerY-2.0, 2.0, // v7-v4-v3-v2 down
-     this.centerX+2.0, this.centerY-2.0,-2.0,  this.centerX-2.0, this.centerY-2.0,-2.0,  this.centerX-2.0, this.centerY+2.0,-2.0,   this.centerX+2.0, this.centerY+2.0,-2.0  // v4-v7-v6-v5 back
+/*    this.vertices = new Float32Array([
+     this.centerX+size, this.centerY+size, size,  this.centerX-size, this.centerY+size,size,  this.centerX-size, this.centerY-size, size,   this.centerX+size, this.centerY-size, size, // v0-v1-v2-v3 front
+     this.centerX+size, this.centerY+size,size,  this.centerX+size, this.centerY-size, size,  this.centerX+size, this.centerY-size,-size,   this.centerX+size, this.centerY+size,-size, // v0-v3-v4-v5 right
+     this.centerX+size, this.centerY+size,size,  this.centerX+size, this.centerY+size,-size,  this.centerX-size, this.centerY+size,-size,  this.centerX-size, this.centerY+size, size, // v0-v5-v6-v1 up
+     this.centerX-size, this.centerY+size,size,  this.centerX-size, this.centerY+size,-size,  this.centerX-size, this.centerY-size,-size,  this.centerX-size, this.centerY-size, size, // v1-v6-v7-v2 left
+     this.centerX-size, this.centerY-size,-size,  this.centerX+size, this.centerY-size,-size,  this.centerX+size, this.centerY-size, size,  this.centerX-size, this.centerY-size, size, // v7-v4-v3-v2 down
+     this.centerX+size, this.centerY-size,-size,  this.centerX-size, this.centerY-size,-size,  this.centerX-size, this.centerY+size,-size,   this.centerX+size, this.centerY+size,-size  // v4-v7-v6-v5 back
      ]); */ 
 
     //Unless we are rotating it on the z plane (which I won't do) these can remain static 
@@ -84,17 +105,24 @@ class Cube extends Geometry {
     0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
    -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
     0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
-    0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
+    0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   // v4-v7-v6-v5 back
+    
+    0,0,0,  0,0,0, 0,0,0, 0,0,0,
+    0,0,0,   0,0,0, 0,0,0, 0,0,0,
+    0,0,0, 0,0,0 ,0,0,0 ,0,0,0,
+    0,0,0 ,0,0,0,0,0,0,0
+
     ]); 
 
-  /*   this.indices = new Uint8Array([
+     this.indices = new Uint8Array([
      0, 1, 2,   0, 2, 3,    // front
      4, 5, 6,   4, 6, 7,    // right
      8, 9,10,   8,10,11,    // up
     12,13,14,  12,14,15,    // left
     16,17,18,  16,18,19,    // down
     20,21,22,  20,22,23     // back
- ]); */ 
+ ]);  
+  
   }
 
   /**
