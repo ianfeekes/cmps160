@@ -84,13 +84,22 @@ function main() {
     return -1; 
   } 
 
-regularShaders=createShader(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER); 
+//regularShaders=createShader(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER); 
 
   //Initialize the new lighting shaders for the program 
-  if (!initShaders(gl, VSHADER_SOURCE, ASSIGN5_FSHADER)) {
+ 
+ /* if (!initShaders(gl, VSHADER_SOURCE, ASSIGN5_FSHADER)) {
     console.log('Failed to intialize lighting shaders.');
     return;
+  }*/ 
+
+  lightingShaders = createShader(gl, VSHADER_SOURCE, ASSIGN5_FSHADER); 
+  if(!lightingShaders)
+  {
+    console.log("failure to initialize the lighting shaders.");
+    return -1; 
   }
+  useShader(gl, lightingShaders); 
 
   /*if(!initShaders(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER)){
     console.log('Failed to initialize normal shaders');
@@ -152,6 +161,12 @@ regularShaders=createShader(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER);
     console.log("Error: could not retrieve u_Switch value\n");
     return -1; 
   }
+  u_LightSwitch = gl.getUniformLocation(gl.program, 'u_LightSwitch'); 
+  if(u_LightSwitch<0)
+  {
+    console.log("Error: could not retreive u_LightSwitch value\n");
+    return -1; 
+  }
   u_FSwitch = gl.getUniformLocation(gl.program, 'u_FSwitch');
   if(u_FSwitch<0)
   {
@@ -175,11 +190,16 @@ regularShaders=createShader(gl, ASSIGN5_VSHADER, ASSIGN5_FSHADER);
     console.log("Error: could not retrieve a_TexCoord value\n");
     return -1; 
   } */ 
+
+  //The light color is always white 
   gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
-  // Set the light direction (in the world coordinate)
-  gl.uniform3f(u_LightPosition, 2.3, 4.0, 8);
+  
   // Set the ambient light
-  gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
+  gl.uniform3f(u_AmbientLight, .2, .2, .2);
+  //gl.uniform3f(u_AmbientLight, .7,.7,.7); 
+
+  //Initially set the lighting to what we want 
+  gl.uniform1f(u_LightSwitch, 1.0); 
 
   gl.uniform1f(u_FSwitch, 1.0);
   //Call initialize event handlers

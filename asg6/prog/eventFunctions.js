@@ -14,11 +14,13 @@
  let rotSlider;           //Responsible for user camera rotation speed 
  let nearSlider;          //Near values
  let farSlider;           //Far values 
+ let aSlider; 
  let orthoButton;         //Button toggler for orthogonal viewing
  let perButton;           //Button toggler for perspective viewing 
  let perspective=true;    //Perspective toggler initialization
  let absX, absY;          //For use in camera position movement 
- let normS=true;   //Boolean flag telling us whether or not to use the normal shader in tick/render
+ let normS=true;          //Boolean flag telling us whether or not to use the normal shader in tick/render
+ let lX, lY, lZ;          //x y z coordinates of white light cube 
 
 /*Initiallizes a few sliders, goes through my attempt to procedurally generate the world*/ 
 function initEventHandelers() {
@@ -29,13 +31,24 @@ function initEventHandelers() {
   rotSlider = document.getElementById('rot'); 
   nearSlider = document.getElementById('near'); 
   farSlider = document.getElementById('far'); 
+  aSlider = document.getElementById('aSlider'); 
   orthoButton = document.getElementById('orthoButton');
   perButton = document.getElementById('perButton'); 
   //Button on click listeners toggle between perspective being true and false 
   orthoButton.onclick = function(){perspective = false;};
   perButton.onclick = function(){perspective=true;};
+  //This adds the light cube which is white 
+  lX=0; 
+  lY=0; 
+  lZ=0; 
+  let white =[1,1,1];
+  let lightCube = new Lcube(.1, lX,lY, lZ); 
+  lightCube.setColor(white); 
+  currScene.addGeometry(lightCube); 
+
   //This adds the main world cube which is set to a sickening purple
   let mag = [.5,0.0,1.0]; 
+  //Change this back to 1.0,true later 
   let baseCube = new Cube(1.0,0,0,true); 
   baseCube.setColor(mag); 
   currScene.addGeometry(baseCube);
@@ -49,9 +62,9 @@ function initEventHandelers() {
         if(map1[j][i]==1)
         {
           /*Create the grid cube and add it to geometry*/ 
+         
           let gridCube = new Cube(.1, -.9+(j*.2), .9-(i*.2), false); 
-          //gridCube.setColor(mag); 
-         // gridCube.colors=verticesColors; 
+
           currScene.addGeometry(gridCube); 
         }
       }
@@ -81,16 +94,11 @@ function processKey(ev) {
   else if(ev.keyCode == 73)zoomSlider.value -= 3;
   //a distusting hack
   else if(ev.keyCode == 75){zoomSlider.value ++; zoomSlider.value++; zoomSlider.value++;}
-  else if(ev.keyCode == 78)normalShader(); 
+  else if(ev.keyCode == 78){normS=!normS;}
 }
 
 /*This is called whenever N is pressed to reset the value of N to true so that the user 
  *can see the differences in lighting*/ 
-function normalShader()
-{
-  console.log("n pressed \n"); 
-  let normS=true; 
-}
 
 function goBackward()
 {

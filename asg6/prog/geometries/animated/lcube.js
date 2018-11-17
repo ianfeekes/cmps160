@@ -1,110 +1,155 @@
-class Lcube extends Geometry{
+/**
+ * Special cube who's coordinates are used for lighting 
+ *
+ * @author "Ian Feekes"
+ * @this {TiltedCube}
+ */
+class Lcube extends Geometry {
+  
+  constructor(size, centerX, centerY, centerZ) {
+    super();
+    this.generateCubeVertices(size, centerX, centerY, centerZ);
+   // this.vertices.push(cubeVertices);
+   this.centerX=centerX;
+   this.centerY=centerY;
+   this.centerZ=centerZ; 
 
-	constructor(size,centerX,centerY,flag){
-		super(); 
-		this.x=centerX; 
-		this.y=centerY; 
-		this.modelMatrix = new Matrix4();  // Model matrix
-  //var mvpMatrix = new Matrix4();    // Model view projection matrix
-        this.normalMatrix = new Matrix4(); // Transformation matrix for normals
-		this.n=this.initVertexBuffers(); 
-	}
+   this.thetaIncr=.003; 
+   this.incrX = .007; 
+   this.incrZ = .007; 
 
-	render(){
-		 gl.uniformMatrix4fv(u_ModelMatrix, false, this.modelMatrix.elements);
-		 this.normalMatrix.setInverseOf(this.modelMatrix);
-         this.normalMatrix.transpose();
-         gl.uniformMatrix4fv(u_NormalMatrix, false, this.normalMatrix.elements);
+   this.theta=0; 
 
-          if (!initArrayBuffer(gl, 'a_Position', this.vertices, 3, gl.FLOAT)) return -1;
-  		  if (!initArrayBuffer(gl, 'a_Color', this.colors, 3, gl.FLOAT)) return -1;
-  if (!initArrayBuffer(gl, 'a_Normal', this.normals, 3, gl.FLOAT)) return -1;
+   this.transX=0;
+   this.transY=0;
+   this.transZ=0; 
+    
+  }
 
-  // Unbind the buffer object
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  translate()
+  {
+    this.modelMatrix.setTranslate(0, 0, -1.6);
+   // this.modelMatrix.setTranslate(0,0,incr); 
+  }
 
-  // Write the indices to the buffer object
-  var indexBuffer = gl.createBuffer();
+  render() {
+    gl.enable(gl.DEPTH_TEST);
+  /*var indexBuffer = gl.createBuffer();
   if (!indexBuffer) {
     console.log('Failed to create the buffer object');
     return false;
   }
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);  */ 
+    //super.render(36, gl.TRIANGLES, 3);
+    let vColorBuffer = gl.createBuffer(); 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vColorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_Color);
+
+    let normBuffer = gl.createBuffer(); 
+    gl.bindBuffer(gl.ARRAY_BUFFER, normBuffer); 
+    gl.bufferData(gl.ARRAY_BUFFER, this.normals, gl.STATIC_DRAW); 
+    gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0,0); 
+    gl.enableVertexAttribArray(a_Normal); 
+
+    sendUniformMatToGLSL(this.modelMatrix.elements, u_ModelMatrix);  
+    sendAttributeBufferToGLSL(this.vertices, 3, a_Position);
+
+    //added messing around with normal matrix variable 
+    normalMatrix.setInverseOf(this.modelMatrix); 
+    normalMatrix.transpose(); 
+    gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements); 
 
 
+    tellGLSLToDrawCurrentBuffer(gl.TRIANGLES, 36);
+  // super.render(this.indices.length, gl.TRIANGLES, 3); 
+    gl.disable(gl.DEPTH_TEST);
 
-         gl.drawElements(gl.TRIANGLES, this.n, gl.UNSIGNED_BYTE, 0);
-	}
 
-	initVertexBuffers() {
-  // Create a cube
-  //    v6----- v5
-  //   /|      /|
-  //  v1------v0|
-  //  | |     | |
-  //  | |v7---|-|v4
-  //  |/      |/
-  //  v2------v3
-  // Coordinates
-  this.vertices = new Float32Array([
-     this.centerX+2.0, this.centerY+2.0, 2.0,  this.centerX-2.0, this.centerY+2.0, 2.0,  this.centerX-2.0, this.centerY-2.0, 2.0,   this.centerX+2.0, this.centerY-2.0, 2.0, // v0-v1-v2-v3 front
-     this.centerX+2.0, this.centerY+2.0, 2.0,  this.centerX+2.0, this.centerY-2.0, 2.0,  this.centerX+2.0, this.centerY-2.0,-2.0,   this.centerX+2.0, this.centerY+2.0,-2.0, // v0-v3-v4-v5 right
-     this.centerX+2.0, this.centerY+2.0, 2.0,  this.centerX+2.0, this.centerY+2.0,-2.0,  this.centerX-2.0, this.centerY+2.0,-2.0,  this.centerX-2.0, this.centerY+2.0, 2.0, // v0-v5-v6-v1 up
-     this.centerX-2.0, this.centerY+2.0, 2.0,  this.centerX-2.0, this.centerY+2.0,-2.0,  this.centerX-2.0, this.centerY-2.0,-2.0,  this.centerX-2.0, this.centerY-2.0, 2.0, // v1-v6-v7-v2 left
-     this.centerX-2.0, this.centerY-2.0,-2.0,  this.centerX+2.0, this.centerY-2.0,-2.0,  this.centerX+2.0, this.centerY-2.0, 2.0,  this.centerX-2.0, this.centerY-2.0, 2.0, // v7-v4-v3-v2 down
-     this.centerX+2.0, this.centerY-2.0,-2.0,  this.centerX-2.0, this.centerY-2.0,-2.0,  this.centerX-2.0, this.centerY+2.0,-2.0,   this.centerX+2.0, this.centerY+2.0,-2.0  // v4-v7-v6-v5 back
-  ]);
+  } 
 
-  // Colors
-  this.colors = new Float32Array([
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v1-v2-v3 front
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v3-v4-v5 right
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v5-v6-v1 up
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v1-v6-v7-v2 left
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v7-v4-v3-v2 down
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0　    // v4-v7-v6-v5 back
- ]);
+  /**
+   * Generates the vertices of TiltedCube. Just a regular cube.
+   *
+   * @private
+   */
+  generateCubeVertices(size, centerX, centerY, centerZ) {
+    this.vertices = new Float32Array([
+      // Vertex coordinates and color
+      centerX-size,  centerY+size,  centerZ+size,      centerX-size, centerY-size,  centerZ+size,       centerX+size, centerY-size,  centerZ+size,    //t0
+      centerX-size,  centerY+size,  centerZ+size,      centerX+size,  centerY+size,  centerZ+size,      centerX+size, centerY-size,  centerZ+size,    //t1
 
-  // Normal
-  this.normals = new Float32Array([
-    0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
-    1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
-    0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
-   -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
-    0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
-    0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
-  ]);
+      centerX+size,  centerY+size,  centerZ+size,      centerX+size, centerY-size,  centerZ+size,       centerX+size, centerY-size, centerZ-size,    //t2
+      centerX+size,  centerY+size,  centerZ+size,      centerX+size, centerY-size, centerZ-size,    centerX+size,  centerY+size, centerZ-size,      //t3
 
-  // Indices of the vertices
-  this.indices = new Uint8Array([
+      centerX+size,  centerY+size, centerZ-size,   centerX+size, centerY-size, centerZ-size,    centerX-size, centerY-size, centerZ-size,          //t4
+      centerX+size,  centerY+size, centerZ-size,   centerX-size, centerY-size, centerZ-size,    centerX-size,  centerY+size, centerZ-size,         //t5
+        
+      centerX-size,  centerY+size, centerZ-size,   centerX-size, centerY-size, centerZ-size,    centerX-size, centerY-size,  centerZ+size,          //t6
+      centerX-size,  centerY+size, centerZ-size,   centerX-size, centerY-size, centerZ+size,       centerX-size,  centerY+size,  centerZ+size,      //t7
+       
+      centerX-size,  centerY+size, centerZ-size,   centerX-size,  centerY+size,  centerZ+size,      centerX+size,  centerY+size,  centerZ+size,      //t8
+      centerX-size,  centerY+size, centerZ-size,   centerX+size,  centerY+size,  centerZ+size,      centerX+size,  centerY+size, centerZ-size,      //t9
+
+      centerX-size, centerY-size,  centerZ+size,       centerX-size, centerY-size, centerZ-size,    centerX+size, centerY-size, centerZ-size,       //t10
+      centerX-size, centerY-size,  centerZ+size,       centerX+size, centerY-size, centerZ-size,    centerX+size, centerY-size,  centerZ+size        //t11
+    ]);  
+
+    //Unless we are rotating it on the z plane (which I won't do) these can remain static 
+    this.normals = new Float32Array([
+    0,0,0,   0,0,1,  0,0,1,      0,0,0,   0,0,1,  0,0,1, 
+    1,0,0,   1,0,0,  1,0,0,      1,0,0,   1,0,0,  1,0,0,
+    0,1,0,   0,1,0,  0,1,0,      0,1,0,   0,1,0,  0,1,0, 
+    -1,0,0,  -1,0,0, -1,0,0,     -1,0,0,  -1,0,0, -1,0,0, 
+    0,-1,0,  0,-1,0,  0,-1,0,     0,-1,0,  0,-1,0, 0,-1,0,
+    0,0,-1,  0,0,-1,  0,0,-1,   0,0,-1,   0,0,-1, 0,0,-1 
+
+    ]); 
+
+     this.indices = new Uint8Array([
      0, 1, 2,   0, 2, 3,    // front
      4, 5, 6,   4, 6, 7,    // right
      8, 9,10,   8,10,11,    // up
     12,13,14,  12,14,15,    // left
     16,17,18,  16,18,19,    // down
     20,21,22,  20,22,23     // back
- ]);
-
-/*
-  // Write the vertex property to buffers (coordinates, colors and normals)
-  if (!initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
-  if (!initArrayBuffer(gl, 'a_Color', colors, 3, gl.FLOAT)) return -1;
-  if (!initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
-
-  // Unbind the buffer object
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  // Write the indices to the buffer object
-  var indexBuffer = gl.createBuffer();
-  if (!indexBuffer) {
-    console.log('Failed to create the buffer object');
-    return false;
+ ]);  
+  
   }
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW); */ 
 
-  return this.indices.length;
-}
+  /**
+   * Updates the animation of the TiltedCube. Should make it rotate.
+   */
+  updateAnimation() {
+    this.lXprev = lX; 
+    this.lZprev = lZ; 
+
+    this.theta+= this.thetaIncr; 
+    if(this.theta>2.1){this.thetaIncr*=-1;} 
+    else if(this.theta<-2.1){this.thetaIncr*=-1;}
+    if(this.theta>=360)
+    {
+      this.theta%=360; 
+      this.LXprev = 0;
+      this.LZprev=0; 
+    } 
+    lX=Math.sin(this.theta)*1.3; 
+    lZ=Math.cos(this.theta)*1.3; 
+    this.incrX=lX-this.lXprev; 
+    this.incrZ=lZ-this.lZprev; 
+
+   this.modelMatrix.translate(this.incrX,0,this.incrZ);
+   //this.incr+=.0001;
+   /*lX+=this.incrX; 
+   lZ+=this.incrZ
+
+   if(lX>1.5)this.incrX*=-1; 
+   if(lX<-1.5)this.incrX*=-1;
+   if(lZ>1.5)this.incrZ*=-1; 
+   if(lZ<-1.5)this.incrZ*=-1;  */ 
+
+  }
 
 }

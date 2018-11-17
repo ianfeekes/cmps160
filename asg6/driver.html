@@ -6,7 +6,7 @@
   <head>
       <meta charset="utf-8"/>
       <title> Ian Feekes ASG5 </title>
-      
+
       <!-- Include external libraries -->
       <script src = "lib/webgl-utils.js"></script>
       <script src = "lib/webgl-debug.js"></script>
@@ -45,11 +45,8 @@
 
   <!--Resize html function taken from book, otherwise use main for initialization--> 
   <body onresize='resize()' onload = 'main()''>
-    <p> Ian Feekes asg5 <br> 
-        W and S allow anterior movement, A and D allow lateral movement <br> 
-        Changing perspective done thorugh J and L keys because the mouse <br> 
-        functionality led to sloppy rendering (and wasn't compulsory in  <br>
-        the rubric) </p> 
+   Ian Feekes ASG6<br> 
+   NOTE: 'N' key works as a toggle rather than a constant listener because I think it's more convenient<br> 
 
      <!--Our range slider cannot go as low as 0 for its value--> 
     [Adjust Zoom ]-----------[Camera Speed]------------[Rot Speed]<br> 
@@ -62,6 +59,9 @@
     <input type="range" min="1" max="100" value="10" class="slider" id="near"> 
     <br>Far<br>  
     <input type="range" min="1" max="100" value="100" class="slider" id="far"> 
+    <br>Ambient Lighting<br> 
+    <input type="range" min="0" max="10" value="3" class="slider" id="aSlider">
+
     <!--Implement buttons for cycling between orthagraphic and perspective proj. --> 
     <button type="button" id="orthoButton">Orthographic Projection</button>
     <button type="button" id="perButton">Perspective Projection</button> 

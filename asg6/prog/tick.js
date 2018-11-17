@@ -21,9 +21,27 @@ function tick() {
   else{
     projMatrix.setOrtho(-1, 1, -1, 1, nearSlider.value/50, Number(farSlider.value/10));
   }
+
+  //Determining 
+  if(normS)
+  {
+    //useShader(gl, lightingShaders);
+    console.log("using lighting shaders"); 
+    gl.uniform1f(u_LightSwitch, 1.0);
+  }
+  else
+  {
+    //useShader(gl, regularShaders); 
+    console.log("using normal shaders "); 
+    gl.uniform1f(u_LightSwitch, 0.0);
+  }
+
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
   gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
+  gl.uniform3f(u_AmbientLight, aSlider.value/10, aSlider.value/10, aSlider.value/10);
 
+  // Set the light direction (in the world coordinate)
+  gl.uniform3f(u_LightPosition, lX, lY, lZ);
 
   currScene.render();
   requestAnimationFrame(tick, canvas);
