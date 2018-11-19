@@ -87,11 +87,17 @@ var ASSIGN5_VSHADER =
      // Calculate the color due to diffuse reflection
   '  vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n' +
      // Calculate the color due to ambient reflection
-
+     //specular lighting calculations 
+  '  float specular = 0.0;\n'+
+  '  float d = max(dot(normal, lightDirection),0.0);\n'+
+  '  if(d>0.0){\n'+
+  '     vec3 reflectVec = reflect(-lightDirection, normal);\n'+
+  '     vec3 viewVec = vec3(0,0,1.0);\n'+ 
+  '     specular=pow(max(dot(reflectVec, viewVec), 0.0),120.0);}\n'+ 
      //if we are working the the phong lighting... 
   '  if(u_LightSwitch==1.0){\n' + 
     '  vec3 ambient = u_AmbientLight * a_Color.rgb;\n' +
-    '  v_Color = vec4(diffuse + ambient, a_Color.a);}\n' + 
+    '  v_Color = vec4(ambient + diffuse * d +specular, a_Color.a);}\n' + 
   '  else if(u_LightSwitch==0.0){\n' + 
   //  '  vec3 ambient = u_AmbientLight * a_Color.rgb;\n' +
     '  v_Color = vec4(diffuse, a_Color.a);}\n '+
