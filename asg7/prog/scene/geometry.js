@@ -32,7 +32,12 @@ class Geometry {
     this.uvVals = []; 
     this.normals = []; 
     this.color_data = []; 
-    for(let i=0;i<200;i++)this.colors.push(Math.random()); 
+    for(let i=0;i<200;i+=6)
+    {
+      //this.colors.push(Math.random()); 
+      let c = Math.floor(Math.random()*255);
+      for(let j=0;j<6;j++)this.colors.push(c/255);  
+    }
     this.colors = new Float32Array(this.colors); 
 
   }

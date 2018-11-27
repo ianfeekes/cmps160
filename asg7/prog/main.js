@@ -76,7 +76,7 @@ function main() {
    *of a design decision for what I believe to be the most
    *aesthetically-pleasing initial view for the users*/ 
   canvas.width = window.innerWidth - 200;
-  canvas.height = window.innerHeight-250; 
+  canvas.height = window.innerHeight-100; 
   //Initializes gl and checks to make sure it exists
   gl = getWebGLContext(canvas);
   if(!gl){

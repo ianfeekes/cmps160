@@ -12,7 +12,9 @@
 function tick() {
   //Updates animation of all geometry before rendering 
   currScene.updateAnimation(); 
-  viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ, G_atX, G_atY, 0, 0, 0, 1);
+  viewMatrix.setLookAt(0,0,2,0,0,0,0,1,0);
+  //viewMatrix.setLookAt(0,0,2,0,0,0,0,1,0);
+  //viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ, G_atX, G_atY, 0, 0, 0, 1);
   //Checks to see if we need to be dealing with orthagonal or perspective view 
   if(perspective){
     //console.log('yes'); 

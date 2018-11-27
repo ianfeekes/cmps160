@@ -123,6 +123,7 @@ class Lcube extends Geometry {
    * Updates the animation of the TiltedCube. Should make it rotate.
    */
   updateAnimation() {
+    /* 
     this.lXprev = lX; 
     this.lZprev = lZ; 
 
@@ -141,6 +142,8 @@ class Lcube extends Geometry {
     this.incrZ=lZ-this.lZprev; 
 
    this.modelMatrix.translate(this.incrX,0,this.incrZ);
+   */ 
+
    //this.incr+=.0001;
    /*lX+=this.incrX; 
    lZ+=this.incrZ

@@ -25,6 +25,10 @@ class Cube extends Geometry {
   }
 
   render() {
+    gl.enable (gl.BLEND);
+  // Set blending function
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  
     gl.enable(gl.DEPTH_TEST);
   /*var indexBuffer = gl.createBuffer();
   if (!indexBuffer) {

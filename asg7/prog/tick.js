@@ -8,6 +8,8 @@
  *scene and animates all the geometries. It adjust the view matrix for 
  *perspective purposes. It calls requestAnimationFrame to the canvas
  */ 
+ let ticker = 15; 
+ let aVal = 2.5; 
 
 function tick() {
   //Updates animation of all geometry before rendering 
@@ -16,35 +18,51 @@ function tick() {
   //Checks to see if we need to be dealing with orthagonal or perspective view 
   if(perspective){
   /*For some reason casting the value of the far slider to a "number" works*/ 
-    projMatrix.setPerspective(zoomSlider.value, canvas.width/canvas.height, nearSlider.value/50, Number(farSlider.value/10));
+    projMatrix.setPerspective(25, canvas.width/canvas.height, .2, 10);
   }
   else{
-    projMatrix.setOrtho(-1, 1, -1, 1, nearSlider.value/50, Number(farSlider.value/10));
+    projMatrix.setOrtho(-1, 1, -1, 1, .2, 10);
   }
 
   //Determining 
   if(normS)
   {
     //useShader(gl, lightingShaders);
-    console.log("using lighting shaders"); 
     gl.uniform1f(u_LightSwitch, 1.0);
   }
   else
   {
     //useShader(gl, regularShaders); 
-    console.log("using normal shaders "); 
     gl.uniform1f(u_LightSwitch, 0.0);
   }
 
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
   gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
-  gl.uniform3f(u_AmbientLight, aSlider.value/10, aSlider.value/10, aSlider.value/10);
+  //gl.uniform3f(u_AmbientLight, aSlider.value/10, aSlider.value/10, aSlider.value/10);
+  gl.uniform3f(u_AmbientLight, aVal/10, aVal/10, aVal/10); 
+  ambientThrob(); 
 
   // Set the light direction (in the world coordinate)
   gl.uniform3f(u_LightPosition, lX, lY, lZ);
+  sendTextToHTML(strArr[idx], textBox); 
 
   currScene.render();
   requestAnimationFrame(tick, canvas);
+}
+
+function ambientThrob()
+{
+  if(ticker<30)
+  {
+    ticker+=.5; 
+    aVal+=.03; 
+  }
+  else if(ticker<60)
+  {
+    ticker+=.5; 
+    aVal-=.03; 
+  }
+  else ticker =0; 
 }
 
 

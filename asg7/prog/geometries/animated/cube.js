@@ -26,6 +26,8 @@ class Cube extends Geometry {
 
   render() {
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND); 
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); 
   /*var indexBuffer = gl.createBuffer();
   if (!indexBuffer) {
     console.log('Failed to create the buffer object');
@@ -58,6 +60,7 @@ class Cube extends Geometry {
     tellGLSLToDrawCurrentBuffer(gl.TRIANGLES, 36);
   // super.render(this.indices.length, gl.TRIANGLES, 3); 
     gl.disable(gl.DEPTH_TEST);
+    //gl.disable(gl.BLEND); 
 
 
   } 
@@ -69,7 +72,6 @@ class Cube extends Geometry {
    */
   generateCubeVertices(size, centerX, centerY) {
     this.vertices = new Float32Array([
-      // Vertex coordinates and color
       centerX-size,  centerY+size,  size,      centerX-size, centerY-size,  size,       centerX+size, centerY-size,  size,    //t0
       centerX-size,  centerY+size,  size,      centerX+size,  centerY+size,  size,      centerX+size, centerY-size,  size,    //t1
 
@@ -130,6 +132,16 @@ class Cube extends Geometry {
     16,17,18,  16,18,19,    // down
     20,21,22,  20,22,23     // back
  ]);  
+
+     this.colors = new Float32Array([
+      0,0,1,   0,0,1,  0,0,1,      0,0,1,   0,0,1,  0,0,1, 
+       0,1,.5,   0,1,.5,  0,1,.5,      0,1,.5,   0,1,.5,  0,1,.5, 
+    1,0,0,   1,0,0,  1,0,0,      1,0,0,   1,0,0,  1,0,0,
+   // 0,1,0,   0,1,0,  0,1,0,      0,1,0,   0,1,0,  0,1,0, 
+    1,0,0,  1,0,0, 1,0,0,     1,0,0,  1,0,0, 1,0,0, 
+    .5,0,.5,  .5,0,.5,  .5,0,.5,     .5,0,.5,  .5,0,.5, .5,0,.5,
+    0,0,1,  0,0,1,  0,0,1,   0,0,1,   0,0,1, 0,0,1 
+      ]); 
   
   }
 

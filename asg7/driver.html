@@ -5,7 +5,7 @@
 <html lang="en">
   <head>
       <meta charset="utf-8"/>
-      <title> Ian Feekes ASG5 </title>
+      <title>Virtual Rave Maze</title>
 
       <!-- Include external libraries -->
       <script src = "lib/webgl-utils.js"></script>
@@ -45,27 +45,10 @@
 
   <!--Resize html function taken from book, otherwise use main for initialization--> 
   <body onresize='resize()' onload = 'main()''>
-   Ian Feekes ASG6<br> 
-   NOTE: 'N' key works as a toggle rather than a constant listener because I think it's more convenient<br> 
-
-     <!--Our range slider cannot go as low as 0 for its value--> 
-    [Adjust Zoom ]-----------[Camera Speed]------------[Rot Speed]<br> 
-    <!--50 usually gives us the best initial perspective for our zoom slider--> 
-    <input type="range" min="1" max="150" value="35" class="slider" id="zoom">
   <!--  <br>Camera Speed<br> -->
-    <input type="range" min="1" max="100" value="50" class="slider" id="speed"> 
-    <input type="range" min="1" max="100" value="50" class="slider" id="rot"> 
-    <br>Near<br> 
-    <input type="range" min="1" max="100" value="10" class="slider" id="near"> 
-    <br>Far<br>  
-    <input type="range" min="1" max="100" value="100" class="slider" id="far"> 
-    <br>Ambient Lighting<br> 
-    <input type="range" min="0" max="10" value="3" class="slider" id="aSlider">
 
-    <!--Implement buttons for cycling between orthagraphic and perspective proj. --> 
-    <button type="button" id="orthoButton">Orthographic Projection</button>
-    <button type="button" id="perButton">Perspective Projection</button> 
     <!--Display canvas element--> 
     <canvas id="canvas"></canvas>
+    <p id="textBox"> </p>
   </body>
 </html>
