@@ -76,26 +76,28 @@ class Lcube extends Geometry {
    * @private
    */
   generateCubeVertices(size, centerX, centerY, centerZ) {
+
+
     this.vertices = new Float32Array([
       // Vertex coordinates and color
-      centerX-size,  centerY+size,  centerZ+size,      centerX-size, centerY-size,  centerZ+size,       centerX+size, centerY-size,  centerZ+size,    //t0
-      centerX-size,  centerY+size,  centerZ+size,      centerX+size,  centerY+size,  centerZ+size,      centerX+size, centerY-size,  centerZ+size,    //t1
+      centerX-size/2,  centerY+size/2,  centerZ+size,      centerX-size/2, centerY-size/2,  centerZ+size,       centerX+size/2, centerY-size/2,  centerZ+size,    //t0
+      centerX-size/2,  centerY+size/2,  centerZ+size,      centerX+size/2,  centerY+size/2,  centerZ+size,      centerX+size/2, centerY-size/2,  centerZ+size,    //t1
 
-      centerX+size,  centerY+size,  centerZ+size,      centerX+size, centerY-size,  centerZ+size,       centerX+size, centerY-size, centerZ-size,    //t2
-      centerX+size,  centerY+size,  centerZ+size,      centerX+size, centerY-size, centerZ-size,    centerX+size,  centerY+size, centerZ-size,      //t3
+      centerX+size/2,  centerY+size/2,  centerZ+size,      centerX+size/2, centerY-size/2,  centerZ+size,       centerX+size/2, centerY-size/2, centerZ-size,    //t2
+      centerX+size/2,  centerY+size/2,  centerZ+size,      centerX+size/2, centerY-size/2, centerZ-size,    centerX+size/2,  centerY+size/2, centerZ-size,      //t3
 
-      centerX+size,  centerY+size, centerZ-size,   centerX+size, centerY-size, centerZ-size,    centerX-size, centerY-size, centerZ-size,          //t4
-      centerX+size,  centerY+size, centerZ-size,   centerX-size, centerY-size, centerZ-size,    centerX-size,  centerY+size, centerZ-size,         //t5
+      centerX+size/2,  centerY+size/2, centerZ-size,   centerX+size/2, centerY-size/2, centerZ-size,    centerX-size/2, centerY-size/2, centerZ-size,          //t4
+      centerX+size/2,  centerY+size/2, centerZ-size,   centerX-size/2, centerY-size/2, centerZ-size,    centerX-size/2,  centerY+size/2, centerZ-size,         //t5
         
-      centerX-size,  centerY+size, centerZ-size,   centerX-size, centerY-size, centerZ-size,    centerX-size, centerY-size,  centerZ+size,          //t6
-      centerX-size,  centerY+size, centerZ-size,   centerX-size, centerY-size, centerZ+size,       centerX-size,  centerY+size,  centerZ+size,      //t7
+      centerX-size/2,  centerY+size, centerZ-size,   centerX-size/2, centerY-size/2, centerZ-size,    centerX-size/2, centerY-size/2,  centerZ+size,          //t6
+      centerX-size/2,  centerY+size/2, centerZ-size,   centerX-size/2, centerY-size/2, centerZ+size,       centerX-size/2,  centerY+size/2,  centerZ+size,      //t7
        
-      centerX-size,  centerY+size, centerZ-size,   centerX-size,  centerY+size,  centerZ+size,      centerX+size,  centerY+size,  centerZ+size,      //t8
-      centerX-size,  centerY+size, centerZ-size,   centerX+size,  centerY+size,  centerZ+size,      centerX+size,  centerY+size, centerZ-size,      //t9
+      centerX-size/2,  centerY+size/2, centerZ-size,   centerX-size/2,  centerY+size/2,  centerZ+size,      centerX+size/2,  centerY+size/2,  centerZ+size,      //t8
+      centerX-size/2,  centerY+size/2, centerZ-size,   centerX+size/2,  centerY+size/2,  centerZ+size,      centerX+size/2,  centerY+size/2, centerZ-size,      //t9
 
-      centerX-size, centerY-size,  centerZ+size,       centerX-size, centerY-size, centerZ-size,    centerX+size, centerY-size, centerZ-size,       //t10
-      centerX-size, centerY-size,  centerZ+size,       centerX+size, centerY-size, centerZ-size,    centerX+size, centerY-size,  centerZ+size        //t11
-    ]);  
+      centerX-size/2, centerY-size/2,  centerZ+size,       centerX-size/2, centerY-size/2, centerZ-size,    centerX+size/2, centerY-size/2, centerZ-size,       //t10
+      centerX-size/2, centerY-size/2,  centerZ+size,       centerX+size/2, centerY-size/2, centerZ-size,    centerX+size/2, centerY-size/2,  centerZ+size        //t11
+    ]);   
 
     //Unless we are rotating it on the z plane (which I won't do) these can remain static 
     this.normals = new Float32Array([
@@ -120,8 +122,8 @@ class Lcube extends Geometry {
   }
 
   move(x,y)
-  {
-    if(moveFlag && Math.abs(g_EyeX-lX)<1 && Math.abs(g_EyeY-lY)<1)
+  { 
+    if(moveFlag && Math.abs(g_EyeX-lX)<.3 || Math.abs(g_EyeY-lY)<.3)
     {
       this.modelMatrix.translate(x, y, 0); 
       lX+=x;

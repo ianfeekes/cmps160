@@ -47,7 +47,11 @@ class Scene {
   render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     for(let i = 0; i < this.geometries.length; i++) {
-      this.geometries[i].render();
+      if(!gToggle && this.geometries[i] instanceof Lcube)
+      {
+
+      }
+      else this.geometries[i].render();
     }
   }
 

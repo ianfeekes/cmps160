@@ -41,7 +41,7 @@ function initEventHandelers() {
   strArr = [
     "Welcome to the virtual rave maze. Before you move, please \n select your most important tool - the color of your glowstick. \n Toggle colours by clicking on the stick directly in front of you , then press enter to confirm your selection. \n", 
     "Thats a groovy colour! Now you must make it through the maze to find the venue!", 
-    "dummy string for now...", 
+    "Yay you made it to the venue! Rage on!", 
     "Help: To move, use keys wsad, to rotate use keys j and l. Pressing 'u' will toggle holding out your glowstick. Pressing 'i' looking from the corner towards a block will mark the block so that you know you've been there (as well as amp up the intensity of the rave), but be careful: you only get to mark 5 blocks with your good vibes! The help message is toggled with the h key.",
     "Bad vibes, man! You fell into a lava lamp... try to make it next time by reloading the page", 
   ];
@@ -80,6 +80,12 @@ function initEventHandelers() {
           //throw the gridcubes into a separate array additionally 
           cubes.push(gridCube); 
           currScene.addGeometry(gridCube); 
+        }
+        else if(map1[j][i]==2)
+        {
+          let rainCube = new Rcube(.1, -.9+(j*.2), .9-(i*.2), false); 
+          cubes.push(rainCube); 
+          currScene.addGeometry(rainCube); 
         }
       }
     }
@@ -493,12 +499,41 @@ function goLeft(leftAngle)
 
 function leftRotate()
 { 
+    console.log(G_atX-g_EyeX); 
+    console.log(G_atY-g_EyeY); 
     let rotIncr = 10; 
    // console.log(rotIncr);
     angleRotation += rotIncr;
     angleRotation%=360;
+    /*if(G_atX-g_EyeX>0 && 100*Math.cos(angleRotation*(Math.PI/180))<=0)
+    {
+      console.log("moving cube for new perspective forward"); 
+    }
+    else*//* if(G_atX<=0 && 100*Math.cos(angleRotation*(Math.PI/180))>0)
+    {
+      //console.log("moving cube for new perspective back "); 
+      lightCube.move(.3, 0); 
+    }
+    else if(G_atX>0 && 100*Math.cos(angleRotation*(Math.PI/180))<=0)
+    {
+      //console.log("Moving cube for new perspective forward"); 
+      lightCube.move(-.3, 0); 
+    }
+    
+    if(G_atY>0 && 100*Math.sin(angleRotation*(Math.PI/180))<=0)
+    {
+      //console.log("moving cube for new perspective left side  "); 
+      lightCube.move(0, -.4); 
+    }
+    else if(G_atY<=0 && 100*Math.sin(angleRotation*(Math.PI/180))>0)
+    {
+      lightCube.move(0, .4); 
+      //console.log("moving the cube for new perspective right side"); 
+    }*/ 
+
     G_atX = 100 * Math.cos(angleRotation*(Math.PI/180));
     G_atY = 100 * Math.sin(angleRotation*(Math.PI/180));
+
 
    /* console.log(angleRotation); 
     console.log(Math.cos(angleRotation*(Math.PI/180))/20);
