@@ -54,6 +54,11 @@ class Geometry {
     this.colors=new Float32Array(this.colors); 
   }
 
+  getColor(){
+    let a=[this.colors[0], this.colors[1], this.colors[2]];
+    return a; 
+  }
+
   /**
    * Renders this Geometry within your webGL scene.
    */

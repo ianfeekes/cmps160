@@ -31,6 +31,7 @@
  let baseCube;            //The base cube is made global for use in telling if the user is out of bounds 
  let cubes;               //contains all the important cubes for collission and for user interaction purposes 
  let gToggle=true; 
+ let playerMarks;       //the number of cubes the player is allowed to mark throughout the maze
 
 /*Initiallizes a few sliders, goes through my attempt to procedurally generate the world*/ 
 function initEventHandelers() {
@@ -41,9 +42,10 @@ function initEventHandelers() {
     "Welcome to the virtual rave maze. Before you move, please \n select your most important tool - the color of your glowstick. \n Toggle colours by clicking on the stick directly in front of you , then press enter to confirm your selection. \n", 
     "Thats a groovy colour! Now you must make it through the maze to find the venue!", 
     "dummy string for now...", 
-    "Help: To move, use keys wsad, to rotate use keys j and l. Pressing 'i' will mark the cube in the center of the screen so that you can track where you have been in the maze. Pressing 'u' will toggle holding out your glowstick. The help message is toggled with the h key.",
+    "Help: To move, use keys wsad, to rotate use keys j and l. Pressing 'u' will toggle holding out your glowstick. Pressing 'i' looking from the corner towards a block will mark the block so that you know you've been there (as well as amp up the intensity of the rave), but be careful: you only get to mark 5 blocks with your good vibes! The help message is toggled with the h key.",
     "Bad vibes, man! You fell into a lava lamp... try to make it next time by reloading the page", 
   ];
+  playerMarks=5; 
   //cubes is initially empty 
   cubes=[]; 
   //Initialize the scene we are working with 
@@ -175,13 +177,18 @@ function processKey(ev) {
  *to press the 'i' key and the block in the center of the screen will change colour*/ 
 function markBlock()
 {
+  if(playerMarks<=0)return; 
+  //playerMarks--;
   let arr=findAdjCubes(); 
 
   for(let i=0;i<arr.length;i++)
   {
-    if(centered(arr[i]))
+    if(centered(arr[i])&& arr[i].getColor()!=[0,1.0,1.0])
     {
-     arr[i].setColor([1.0,1.0,1.0]); 
+     playerMarks--; 
+     arr[i].setColor([0,1.0,1.0]);
+     //aFluc-=1; 
+     rate+=.03 
      break; 
     }
   }
@@ -190,54 +197,70 @@ function markBlock()
 /*Determines if a cube is pointed to at the center of the screen*/ 
 function centered(cube)
 {
-  //The logic within the if statements can be difficult to follow since javascript lacks a XOR operator 
+  //console.log(G_atX+", "+g_EyeX); 
+  if(Math.abs(G_atX)<45)
+  {
+    //console.log("forward");
+    if(Math.abs(cube.centerX-G_atX)>.4)return false; 
+    else return true; 
+  } 
+  if(G_atX-g_EyeX>=0)
+  {
+    //facing quadrant 1
+   if(G_atY-g_EyeY>=0)
+    {
+      if(cube.centerX>=g_EyeX && cube.centerY>=g_EyeY)
+        return true; 
+    }
+    //facing quadrant 2
+    else
+    {
+      //if(Math.abs(cube.centerX-g_EyeX)>.2)return false; 
 
-  //If we are facing the positive x direction and positive y direction 
-  if(G_atX-g_EyeX>0 && G_atY-g_EyeY>0)
-  {
-    if((cube.centerX>g_EyeX || cube.centerY>g_EyeY)&&(!(cube.centerX>g_EyeX && cube.centerY>g_EyeY)))return true; 
-    else return false; 
+      if(cube.centerX>=g_EyeX && cube.centerY<=g_EyeY)
+        return true; 
+    }
   }
-  //If we are facing the positive x direction and negative y direction 
-  else if(G_atX-g_EyeX>0 && G_atY-g_EyeY<=0)
+  else
   {
-    if((cube.centerX>g_EyeX || cube.centerY<g_EyeY)&&(!(cube.centerX>g_EyeX && cube.centerY<g_EyeY)))return true; 
-    else return false; 
-  }
-  //If we are facing the negative x direction and positive y direction 
-  else if(G_atY-g_EyeY>0)
-  {
-    if((cube.centerX<g_EyeX || cube.centerY>g_EyeY)&&(!(cube.centerX<g_EyeX && cube.centerY>g_EyeY)))return true; 
-    else return false; 
-  }
-  //If we are facing negative x direction and negative y direction 
-  else 
-  {
-    if((cube.centerX<g_EyeX || cube.centerY<g_EyeY)&&(!(cube.centerX<g_EyeX && cube.centerY<g_EyeY)))return true;
-    else return false; 
-  }
+    //facing quadrant 3 
+    if(G_atY-g_EyeY>=0)
+    {
+      if(cube.centerX<=g_EyeX && cube.centerY>=g_EyeY)
+        return true; 
+    }
+    //facing quadrant 4 
+    else
+    {
+      //if(Math.abs(cube.centerX-g_EyeX)>.2)return false; 
 
-  /*console.log("in centered..."); 
-  //console.log(cube); 
-  //console.log("Gs "+G_atX/100+", "+G_atY/100);
-  //let x=G_atX/100; 
-  //let y=G_atY/100;
-  let x=g_EyeX-.1; 
-  let y=g_EyeY-.1; 
-  console.log(x+", "+y);   
-  console.log(cube.centerX); 
-  console.log(cube.size); 
-  console.log(cube.centerX+cube.size);//+", "+cube.centerX-cube.size); 
-  console.log(cube.centerY+cube.size);//+", "+cube.centerY-cube.size);  
-
-  if(cube.centerX+cube.size>x && cube.centerX-cube.size<x
-  || cube.centerY+cube.size>y && cube.centerY-cube.size<y)
-  {
-    console.log("returning true..."); 
-    return true; 
+      if(cube.centerX<=g_EyeX && cube.centerY<=g_EyeY)
+        return true; 
+    }
   }
-  console.log("returning false"); 
-  return false;*/  
+  return false; 
+
+}
+
+/*Takes in the hypothetical x and y values and sees if there will be collision. If not, then it 
+  allows for movement. This function is called each time the user wants to move the camera*/ 
+function freeMove(x, y)
+{
+  /*figures out the array of adjacent cubes so that we only need to detect collision for the nearest 
+    few objects
+    */ 
+  let arr=findAdjCubes(); 
+  //iterate through all nearby cubes and look to see if there is collision 
+  for(let i=0;i<arr.length;i++)
+  {
+    /*if the hypothetical camera position would put it within bounds of a cube then stop that from 
+      happening */ 
+     if(x+.08>arr[i].centerX-arr[i].size && x-.08<arr[i].centerX+arr[i].size &&
+        y+.08>arr[i].centerY-arr[i].size && y-.08<arr[i].centerY+arr[i].size)
+      return false; 
+  }
+  //if there's no collision with the nearby cubes then all is good 
+  return true; 
 }
 
 /*Makes it so that we don't have to iterate through an array of hundreds of data 
@@ -247,11 +270,11 @@ function findAdjCubes()
   let arr=[]; 
   for(let i=0;i<cubes.length;i++)
   {
-    if(Math.abs(cubes[i].centerX-g_EyeX)<.5 && Math.abs(cubes[i].centerY-g_EyeY)<.5)
+    if(Math.abs(cubes[i].centerX-g_EyeX)<.3 && Math.abs(cubes[i].centerY-g_EyeY)<.3)
       {
         arr.push(cubes[i]);
-        cubes[i].setColor([0,1,1]); 
-        } 
+        //cubes[i].setColor([0,1,1]); 
+      } 
   }
   return arr; 
 }
@@ -312,45 +335,46 @@ function goBackward()
     }
 }
 
+//now detects using freeMove to see if movement is possible 
 function goForward()
 {
   let forVal = 45/1000; 
   if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == 1) { 
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX-forVal, g_EyeY+forVal*(absY/absX))) {
         g_EyeY += forVal * (absY/absX);
         g_EyeX -= forVal;
         lightCube.move(-forVal, forVal*(absY/absX)); 
-      } else {
+      } else if(freeMove(g_EyeX-forVal*(absX/absY), g_EyeY+forVal)){
         g_EyeY += forVal;
         g_EyeX -= forVal * (absX/absY);
         lightCube.move(-forVal*(absX/absY), forVal); 
       } 
     } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){                
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX-forVal, g_EyeY-forVal*(absY/absX))) {
         g_EyeY -= forVal * (absY/absX);
         g_EyeX -= forVal;
         lightCube.move(-forVal, -forVal*(absY/absX)); 
-      } else {
+      } else if(freeMove(g_EyeX-forVal*(absX/absY), g_EyeY-forVal)){
         g_EyeY -= forVal;
         g_EyeX -= forVal * (absX/absY);
         lightCube.move(-forVal*(absX/absY), -forVal); 
       } 
     } else if (Math.sign(G_atX) == 1 && Math.sign(G_atY) == -1) {
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX+forVal, g_EyeY-forVal*(absY/abs))) {
         g_EyeY -= forVal * (absY/absX);
         g_EyeX += forVal;
         lightCube.move(forVal, -forVal*(absY/absX)); 
-      } else {
+      } else if(freeMove(g_EyeX+forVal*(absX/absY),g_EyeY-forVal)) {
         g_EyeY -= forVal;
         g_EyeX += forVal * (absX/absY);
         lightCube.move(forVal*(absX/absY), -forVal); 
       } 
     } else {
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX+forVal, g_EyeY+forVal*(absY/absX))) {
         g_EyeY += forVal * (absY/absX);
         g_EyeX += forVal;
         lightCube.move(forVal, forVal*(absY/absX)); 
-      } else {
+      } else if(freeMove(g_EyeX+forVal*(absX/absY), g_EyeY+forVal)){
         g_EyeY += forVal;
         g_EyeX += forVal * (absX/absY);
         lightCube.move(forVal*(absX/absY), forVal); 

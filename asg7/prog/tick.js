@@ -12,6 +12,8 @@
  let aVal = 2.5; 
  let deathFlag = false; 
  let onceFlag=  false; 
+ let aFluc=30; 
+ let rate=.5; 
 
 function tick() {
   //Updates animation of all geometry before rendering 
@@ -90,15 +92,15 @@ function tick() {
 /*Creates a pulsing ambient light for the rave atmosphere*/ 
 function ambientThrob()
 {
-  if(ticker<30)
+  if(ticker<aFluc)
   {
-    ticker+=.5; 
-    aVal+=.03; 
+    ticker+=rate; 
+    aVal+=rate/15; 
   }
-  else if(ticker<60)
+  else if(ticker<aFluc*2)
   {
-    ticker+=.5; 
-    aVal-=.03; 
+    ticker+=rate; 
+    aVal-=rate/15; 
   }
   else ticker =0; 
 }
