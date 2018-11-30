@@ -99,8 +99,8 @@ var ASSIGN5_VSHADER =
     '  vec3 ambient = u_AmbientLight * a_Color.rgb;\n' +
     '  v_Color = vec4(ambient + diffuse, a_Color.a);}\n' + 
   '  else if(u_LightSwitch==0.0){\n' + 
-  //  '  vec3 ambient = u_AmbientLight * a_Color.rgb;\n' +
-    '  v_Color = vec4(diffuse, a_Color.a);}\n '+
+    '  vec3 ambient = u_AmbientLight * a_Color.rgb;\n' +
+    '  v_Color = vec4(ambient, a_Color.a);}\n '+
  // '  v_Color = vec4(diffuse, a_Color.a;}\n'+
   '}\n';
 

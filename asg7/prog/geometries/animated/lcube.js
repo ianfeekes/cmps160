@@ -13,7 +13,7 @@ class Lcube extends Geometry {
    this.centerX=centerX;
    this.centerY=centerY;
    this.centerZ=centerZ; 
-
+   this.size=size; 
    this.thetaIncr=.003; 
    this.incrX = .007; 
    this.incrZ = .007; 
@@ -119,10 +119,35 @@ class Lcube extends Geometry {
   
   }
 
+  move(x,y)
+  {
+    if(moveFlag)
+    {
+      this.modelMatrix.translate(x, y, 0); 
+      lX+=x;
+      lY+=y; 
+    }
+  }
+
+  rotate(incr)
+  {
+    //rotation should probably be around camera rather than shape center but 
+    // we will figure it out as it goes 
+     //this.modelMatrix.translate(this.centerX, this.centerY, 0);
+     this.modelMatrix.translate(g_EyeX, g_EyeY, 0); 
+     this.modelMatrix.rotate(incr,0,0,1); 
+     this.modelMatrix.translate(-g_EyeX, -g_EyeY, 0); 
+     //this.modelMatrix.translate(-this.centerX, -this.centerY, 0); 
+  }
+
   /**
    * Updates the animation of the TiltedCube. Should make it rotate.
    */
   updateAnimation() {
+    /*if(moveFlag)
+    {
+      this.modelMatrix.translate(0.01, 0.01, 0); 
+    }*/ 
     /* 
     this.lXprev = lX; 
     this.lZprev = lZ; 

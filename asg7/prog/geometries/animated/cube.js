@@ -12,7 +12,10 @@ class Cube extends Geometry {
    // this.vertices.push(cubeVertices);
     this.x.push(centerX);
     this.y.push(centerY);
-    if(flag)this.translate(); 
+    if(flag)this.translate();
+    this.size=size; 
+    this.centerX=centerX; 
+    this.centerY=centerY;  
 
     // Recommendations: Might want to tilt your cube at 30 degrees relative to
     // the z-axis here. Pretty good tilt that lets us see that it's a cube.
@@ -20,7 +23,7 @@ class Cube extends Geometry {
 
   translate()
   {
-    this.modelMatrix.setTranslate(0, 0, -1.1);
+    this.modelMatrix.setTranslate(0, 0, -4.1);
     //this.modelMatrix.setTranslate(0,0,-.3); 
   }
 
