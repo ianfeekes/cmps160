@@ -1,7 +1,7 @@
 /*Ian Feekes
  *#1474914
  *ifeekes@ucsc.edu
- *cmps160 asg5
+ *cmps160 asg7
  *eventFunctions.js
  *
  *This file has been altered significantly from the previous assignment. 
@@ -249,15 +249,17 @@ function freeMove(x, y)
   /*figures out the array of adjacent cubes so that we only need to detect collision for the nearest 
     few objects
     */ 
-  let arr=findAdjCubes(); 
+  let a=findAdjCubes(); 
   //iterate through all nearby cubes and look to see if there is collision 
-  for(let i=0;i<arr.length;i++)
+  for(let i=0;i<a.length;i++)
   {
     /*if the hypothetical camera position would put it within bounds of a cube then stop that from 
       happening */ 
-     if(x+.08>arr[i].centerX-arr[i].size && x-.08<arr[i].centerX+arr[i].size &&
-        y+.08>arr[i].centerY-arr[i].size && y-.08<arr[i].centerY+arr[i].size)
-      return false; 
+     if(x+.05>a[i].centerX-a[i].size && x-.05<a[i].centerX+a[i].size &&
+        y+.05>a[i].centerY-a[i].size && y-.05<a[i].centerY+a[i].size) return false; 
+      //For my original debugging with collision I would set the cubes to white to tell when you collide 
+      //{a[i].setColor([1,1,1]);return false; }
+
   }
   //if there's no collision with the nearby cubes then all is good 
   return true; 
@@ -293,44 +295,44 @@ function goBackward()
 {
   let backVal = 45/1000; 
   if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == 1) {
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX+backVal, g_EyeY-backVal*(absY/absX))) {
         g_EyeY -= backVal* (absY/absX);
         g_EyeX += backVal;
-        lightCube.move(backVal, -backVal*(absY/absX)); 
-      } else {
+        //lightCube.move(backVal, -backVal*(absY/absX)); 
+      } else if(freeMove(g_EyeX+backVal*(absX/absY), g_EyeY-backVal)) {
         g_EyeY -= backVal;
         g_EyeX += backVal * (absX/absY);
-        lightCube.move(backVal*(absX/absY),-backVal,);
+        //lightCube.move(backVal*(absX/absY),-backVal,);
       } 
     } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){             
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX+backVal, g_EyeY+backVal*(absY/absX))) {
         g_EyeY += backVal * (absY/absX);
         g_EyeX += backVal;
-        lightCube.move(backVal, backVal*(absY/absX)); 
-      } else {
+        //lightCube.move(backVal, backVal*(absY/absX)); 
+      } else if(freeMove(g_EyeX+backVal*(absX/absY), g_EyeY+backVal)) {
         g_EyeY += backVal;
         g_EyeX += backVal * (absX/absY);
-        lightCube.move(backVal*(absX/absY),backVal); 
+        //lightCube.move(backVal*(absX/absY),backVal); 
       } 
     } else if (Math.sign(G_atX) == 1 && Math.sign(G_atY) == -1) {
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX-backVal, g_EyeY+backVal*(absY/absX))) {
         g_EyeY += backVal * (absY/absX);
         g_EyeX -= backVal;
-        lightCube.move(-backVal, backVal*(absY/absX)); 
-      } else {
+        //lightCube.move(-backVal, backVal*(absY/absX)); 
+      } else if(freeMove(g_EyeX-backVal*(absX/absY), g_EyeY+backVal)) {
         g_EyeY += backVal;
         g_EyeX -= backVal * (absX/absY);
-        lightCube.move(-backVal*(absX/absY), backVal); 
+        //lightCube.move(-backVal*(absX/absY), backVal); 
       } 
     } else {
-      if(absX > absY) {
+      if(absX > absY && freeMove(g_EyeX-backVal, g_EyeY-backVal*(absY/absX))) {
         g_EyeY -= backVal * (absY/absX);
         g_EyeX -= backVal;
-        lightCube.move(-backVal, -backVal*(absY/absX)); 
-      } else {
+        //lightCube.move(-backVal, -backVal*(absY/absX)); 
+      } else if(freeMove(g_EyeX-backVal*(absX/absY), g_EyeY-backVal)){
         g_EyeY -= backVal;
         g_EyeX -= backVal * (absX/absY);
-        lightCube.move(-backVal*(absX/absY), -backVal); 
+        //lightCube.move(-backVal*(absX/absY), -backVal); 
       } 
     }
 }
@@ -343,41 +345,41 @@ function goForward()
       if(absX > absY && freeMove(g_EyeX-forVal, g_EyeY+forVal*(absY/absX))) {
         g_EyeY += forVal * (absY/absX);
         g_EyeX -= forVal;
-        lightCube.move(-forVal, forVal*(absY/absX)); 
+        //lightCube.move(-forVal, forVal*(absY/absX)); 
       } else if(freeMove(g_EyeX-forVal*(absX/absY), g_EyeY+forVal)){
         g_EyeY += forVal;
         g_EyeX -= forVal * (absX/absY);
-        lightCube.move(-forVal*(absX/absY), forVal); 
+        //lightCube.move(-forVal*(absX/absY), forVal); 
       } 
     } else if(Math.sign(G_atX) == -1 && Math.sign(G_atY) == -1){                
       if(absX > absY && freeMove(g_EyeX-forVal, g_EyeY-forVal*(absY/absX))) {
         g_EyeY -= forVal * (absY/absX);
         g_EyeX -= forVal;
-        lightCube.move(-forVal, -forVal*(absY/absX)); 
+        //lightCube.move(-forVal, -forVal*(absY/absX)); 
       } else if(freeMove(g_EyeX-forVal*(absX/absY), g_EyeY-forVal)){
         g_EyeY -= forVal;
         g_EyeX -= forVal * (absX/absY);
-        lightCube.move(-forVal*(absX/absY), -forVal); 
+        //lightCube.move(-forVal*(absX/absY), -forVal); 
       } 
     } else if (Math.sign(G_atX) == 1 && Math.sign(G_atY) == -1) {
-      if(absX > absY && freeMove(g_EyeX+forVal, g_EyeY-forVal*(absY/abs))) {
+      if(absX > absY && freeMove(g_EyeX+forVal, g_EyeY-forVal*(absY/absX))) {
         g_EyeY -= forVal * (absY/absX);
         g_EyeX += forVal;
-        lightCube.move(forVal, -forVal*(absY/absX)); 
+        //lightCube.move(forVal, -forVal*(absY/absX)); 
       } else if(freeMove(g_EyeX+forVal*(absX/absY),g_EyeY-forVal)) {
         g_EyeY -= forVal;
         g_EyeX += forVal * (absX/absY);
-        lightCube.move(forVal*(absX/absY), -forVal); 
+        //lightCube.move(forVal*(absX/absY), -forVal); 
       } 
     } else {
       if(absX > absY && freeMove(g_EyeX+forVal, g_EyeY+forVal*(absY/absX))) {
         g_EyeY += forVal * (absY/absX);
         g_EyeX += forVal;
-        lightCube.move(forVal, forVal*(absY/absX)); 
+        //lightCube.move(forVal, forVal*(absY/absX)); 
       } else if(freeMove(g_EyeX+forVal*(absX/absY), g_EyeY+forVal)){
         g_EyeY += forVal;
         g_EyeX += forVal * (absX/absY);
-        lightCube.move(forVal*(absX/absY), forVal); 
+        //lightCube.move(forVal*(absX/absY), forVal); 
       } 
     } 
 }
@@ -385,120 +387,107 @@ function goForward()
 function goRight(leftAngle)
 {
   let lVal = 45/1000; 
-  if(leftAngle <45)
+  if(leftAngle <45 && freeMove(g_EyeX+lVal, g_EyeY+lVal*(absX/absY)))
   {
-    g_EyeY+=lVal*(absX/absY); 
+    g_EyeY +=lVal*(absX/absY); 
     g_EyeX += lVal;
-    lightCube.move(lVal, lVal*(absX/absY)); 
+    //lightCube.move(lVal, lVal*(absX/absY)); 
   }
-  else if(leftAngle<90)
+  else if(leftAngle<90 && freeMove(g_EyeX+lVal*(absY/absX), g_EyeY+lVal))
   {
     g_EyeY += lVal;
     g_EyeX += lVal * (absY/absX);
-    lightCube.move(lVal*(absY/absX), lVal); 
+    //lightCube.move(lVal*(absY/absX), lVal); 
   }
-  else if(leftAngle<135)
+  else if(leftAngle<135 && freeMove(g_EyeX-lVal*(absY/absX), g_EyeY+lVal))
   {
     g_EyeY += lVal;
     g_EyeX -= lVal * (absY/absX);
-    lightCube.move(-lVal*(absY/absX), lVal); 
+    //lightCube.move(-lVal*(absY/absX), lVal); 
   }
-  else if(leftAngle<180)
+  else if(leftAngle<180 && freeMove(g_EyeX-lVal, g_EyeY+lVal*(absX/absY)))
   {
     g_EyeY += lVal * (absX/absY);
     g_EyeX -= lVal;
-    lightCube.move(-lVal, lVal*(absX/absY)); 
+    //lightCube.move(-lVal, lVal*(absX/absY)); 
   }
-  else if(leftAngle<225)
+  else if(leftAngle<225 && freeMove(g_EyeX-lVal, g_EyeY-lVal*(absX/absY)))
   {
     g_EyeY -= lVal * (absX/absY);
     g_EyeX -= lVal;
-    lightCube.move(-lVal, -lVal*(absX/absY)); 
+    //lightCube.move(-lVal, -lVal*(absX/absY)); 
   }
-  else if(leftAngle<270)
+  else if(leftAngle<270 && freeMove(g_EyeX-lVal, g_EyeY-lVal*(absX/absY)))
   {
     g_EyeY -= lVal * (absX/absY);
     g_EyeX -= lVal;
-    lightCube.move(-lVal, -lVal*(absX/absY)); 
+    //lightCube.move(-lVal, -lVal*(absX/absY)); 
   }
-  else if(leftAngle<315)
+  else if(leftAngle<315 && freeMove(g_EyeX+lVal*(absY/absX), g_EyeY-lVal))
   {
     g_EyeY -= lVal;
     g_EyeX += lVal * (absY/absX);
-    lightCube.move(lVal*(absY/absX), -lVal); 
+    //lightCube.move(lVal*(absY/absX), -lVal); 
   }
-  else 
+  else if(freeMove(g_EyeX+lVal, g_EyeY-lVal*(absX/absY)))
   {
     g_EyeY -= lVal * (absX/absY);
     g_EyeX += lVal;
-    lightCube.move(lVal, -lVal*(absX/absY)); 
+    //lightCube.move(lVal, -lVal*(absX/absY)); 
   } 
 }
 
 /*Processes the angle for how to increment the camera*/ 
 function goLeft(leftAngle)
 {
-  //console.log(leftAngle); 
-  /* let lVal = speedSlider.value/1000; 
-  if(Math.sin(leftAngle)>0)
-  {
-    g_EyeY+=lVal*(absX/absY);
-  }
-  else g_EyeY-=lVal*(absX/absY); 
-  if(Math.cos(leftAngle)>0)
-  {
-    g_EyeX+=lVal*(absX/absY);
-  }
-  else g_EyeX-=lVal*(absX/absY); */ 
-
   let lVal = 45/1000; 
-  if(leftAngle <45)
+  if(leftAngle <45 && freeMove(g_EyeX+lVal, g_EyeY+lVal*(absX/absY)))
   {
     g_EyeY+=lVal*(absX/absY); 
     g_EyeX += lVal;
-    lightCube.move(lVal, lVal*(absX/absY)); 
+    //lightCube.move(lVal, lVal*(absX/absY)); 
   }
-  else if(leftAngle<90)
+  else if(leftAngle<90 && freeMove(g_EyeX+lVal*(absY/absX), g_EyeY+lVal))
   {
     g_EyeY += lVal;
     g_EyeX += lVal * (absY/absX);
-    lightCube.move(lVal*(absY/absX), lVal); 
+    //lightCube.move(lVal*(absY/absX), lVal); 
   }
-  else if(leftAngle<135)
+  else if(leftAngle<135 && freeMove(g_EyeX-lVal*(absY/absX), g_EyeY+lVal))
   {
     g_EyeY += lVal;
     g_EyeX -= lVal * (absY/absX);
-    lightCube.move(-lVal*(absY/absX), lVal); 
+    //lightCube.move(-lVal*(absY/absX), lVal); 
   }
-  else if(leftAngle<180)
+  else if(leftAngle<180 && freeMove(g_EyeX-lVal, g_EyeY+lVal*(absX/absY)))
   {
     g_EyeY += lVal * (absX/absY);
     g_EyeX -= lVal;
-    lightCube.move(-lVal, lVal*(absX/absY)); 
+    //lightCube.move(-lVal, lVal*(absX/absY)); 
   }
-  else if(leftAngle<225)
+  else if(leftAngle<225 && freeMove(g_EyeX-lVal, g_EyeY-lVal*(absX/absY)))
   {
     g_EyeY -= lVal * (absX/absY);
     g_EyeX -= lVal;
-    lightCube.move(-lVal, -lVal*(absX/absY)); 
+    //lightCube.move(-lVal, -lVal*(absX/absY)); 
   }
-  else if(leftAngle<270)
+  else if(leftAngle<270 && freeMove(g_EyeX-lVal, g_EyeY-lVal*(absX/absY)))
   {
     g_EyeY -= lVal * (absX/absY);
     g_EyeX -= lVal;
-    lightCube.move(-lVal*(absX/absY), -lVal); 
+    //lightCube.move(-lVal*(absX/absY), -lVal); 
   }
-  else if(leftAngle<315)
+  else if(leftAngle<315 && freeMove(g_EyeX+lVal*(absY/absX), g_EyeY-lVal))
   {
     g_EyeY -= lVal;
     g_EyeX += lVal * (absY/absX);
-    lightCube.move(lVal*(absY/absX), -lVal); 
+    //lightCube.move(lVal*(absY/absX), -lVal); 
   }
-  else 
+  else if(freeMove(g_EyeX+lVal, g_EyeY-lVal*(absX/absY)))
   {
     g_EyeY -= lVal * (absX/absY);
     g_EyeX += lVal;
-    lightCube.move(lVal, -lVal*(absX/absY)); 
+    //lightCube.move(lVal, -lVal*(absX/absY)); 
   } 
 }
 

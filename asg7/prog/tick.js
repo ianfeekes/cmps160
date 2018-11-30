@@ -14,8 +14,24 @@
  let onceFlag=  false; 
  let aFluc=30; 
  let rate=.5; 
+ let prevX=g_EyeX;
+ let prevY=g_EyeY; 
 
 function tick() {
+  /*Sometimes there is a strange bug where the camera position will jump up an exponential, or even
+   *infinite number when running into cubes, and a rather hackey solution to this is simply setting 
+   *the constraint where you can't move the camera an obsene amount each frame, and if that is the 
+   *case you simply set it back to the value of the camera coordinate from the previous frame. This 
+   *works because the camera values only jump to obscene values when the user moves in very specific 
+   *ways*/ 
+  if(Math.abs(prevX-g_EyeX)>1)g_EyeX=prevX;
+  if(Math.abs(prevY-g_EyeY)>1)g_EyeY=prevY; 
+  if(Math.abs(prevY-g_EyeY)<1 && Math.abs(prevX-g_EyeX)<1)
+  {
+  if(G_atY-g_EyeY>0) lightCube.move(g_EyeX-prevX, g_EyeY-prevY); 
+//  else {console.log("foo"); lightCube.move(g_EyeX-prevX, prevY-g_EyeY);}//lightCube.move(g_EyeX-prevX, g_EyeY-prevY-.3); }
+  }
+
   //Updates animation of all geometry before rendering 
   currScene.updateAnimation(); 
   viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ, G_atX, G_atY, 0, 0, 0, 1);
@@ -83,7 +99,10 @@ function tick() {
     currScene.addGeometry(c);
     deathFlag=true; 
     }
-  }
+  } 
+
+  prevX=g_EyeX;
+  prevY=g_EyeY; 
 
   currScene.render();
   requestAnimationFrame(tick, canvas);

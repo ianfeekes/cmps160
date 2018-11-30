@@ -121,7 +121,7 @@ class Lcube extends Geometry {
 
   move(x,y)
   {
-    if(moveFlag)
+    if(moveFlag && Math.abs(g_EyeX-lX)<1 && Math.abs(g_EyeY-lY)<1)
     {
       this.modelMatrix.translate(x, y, 0); 
       lX+=x;
